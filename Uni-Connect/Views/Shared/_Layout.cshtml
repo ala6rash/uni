@@ -4,43 +4,45 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - Uni_Connect</title>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/Uni_Connect.styles.css" asp-append-version="true" />
+    <link href="~/css/login.css" rel="stylesheet" />
 </head>
+<style>
+    .footer {
+        background: #0F172A;
+        color: #64748B;
+        padding: 48px;
+        text-align: center
+    }
+</style>
 <body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Uni_Connect</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </nav>
-    </header>
-    <div class="container">
+
+   
+    
         <main role="main" class="pb-3">
             @RenderBody()
         </main>
-    </div>
-
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2026 - Uni_Connect - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+   
+    <footer class="footer">
+        <div style="max-width:900px;margin:0 auto">
+            <div style="display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:20px">
+                <div style="width:36px;height:36px;background:linear-gradient(135deg,#3D52A0,#7091E6);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px">🎓</div>
+                <span style="font-weight:900;font-size:18px;color:#CBD5E1">UniConnect</span>
+            </div>
+            <p style="font-size:14px;margin-bottom:18px">Philadelphia University Peer Learning Platform</p>
+            <div style="display:flex;gap:28px;justify-content:center;flex-wrap:wrap;margin-bottom:24px">
+                <a asp-controller="Login" asp-action="Login_Page" class="ftr-lnk">Sign In</a>
+                <a asp-controller="Login" asp-action="Register_Page" class="ftr-lnk">Register</a>
+                <a href="dashboard.html" class="ftr-lnk">Dashboard</a>
+                <a href="leaderboard.html" class="ftr-lnk">Leaderboard</a>
+                <a href="points.html" class="ftr-lnk">Rewards</a>
+            </div>
+            <div style="border-top:1px solid #1E293B;padding-top:22px;font-size:13px;line-height:1.8">
+                Built by <strong style="color:#94A3B8">Ahmad Al-Hawwani · Ahmad Al-Atrash · Mustafa Maqousi · Abdul-Razzaq Qara</strong><br>
+                Philadelphia University · Graduation Project 2026
+            </div>
         </div>
     </footer>
+   
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
