@@ -70,7 +70,7 @@
         @* --- University Email Field --- *@
         <div class="form-group">
           <label class="form-label" asp-for="Email">University Email</label>
-          <input class="form-input" asp-for="Email" type="email" placeholder="202210882@philadelphia.edu.jo" />
+          <input class="form-input" asp-for="Email" type="email" placeholder="StudentID@philadelphia.edu.jo" />
           <div class="form-hint">Format: StudentID@philadelphia.edu.jo</div>
           <span asp-validation-for="Email" class="field-validation-error"></span>
         </div>
@@ -107,6 +107,7 @@
         <div class="form-group">
           <label class="form-label" asp-for="Password">Password</label>
           <input class="form-input" asp-for="Password" type="password" placeholder="Minimum 8 characters" />
+          <div class="form-hint">Must include uppercase, lowercase, number, and special character (e.g. Test@1234)</div>
           <span asp-validation-for="Password" class="field-validation-error"></span>
         </div>
 

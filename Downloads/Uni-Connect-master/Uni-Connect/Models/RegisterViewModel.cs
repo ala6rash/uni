@@ -41,6 +41,8 @@ namespace Uni_Connect.Models
         // [DataType(DataType.Password)] = tells the browser to show dots instead of text
         [Required(ErrorMessage = "Please enter a password")]
         [MinLength(8, ErrorMessage = "Password must be at least 8 characters")]
+        [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^a-zA-Z\d]).{8,}$",
+            ErrorMessage = "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character")]
         [DataType(DataType.Password)]
         [Display(Name = "Password")]
         public string Password { get; set; }
