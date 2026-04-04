@@ -7,131 +7,123 @@ using Uni_Connect.Models;
 
 namespace Uni_Connect.Controllers
 {
-    /// <summary>
-    /// LoginController handles everything related to user authentication:
-    /// - Showing the Login page
-    /// - Showing the Register page
-    /// - Processing the Login form (checking credentials)
-    /// - Processing the Register form (creating new users)
-    /// - Logging out
-    /// 
-    /// HOW MVC WORKS (simple explanation):
-    /// 1. User visits a URL like /Login/Login_Page
-    /// 2. ASP.NET looks at the URL: "Login" = Controller name, "Login_Page" = Action (method) name
-    /// 3. It calls the Login_Page() method in this controller
-    /// 4. The method returns View() which renders the .cshtml file with the same name
-    /// </summary>
     public class LoginController : Controller
     {
-        // _context is our "connection" to the database.
-        // We use it to read/write Users, Posts, etc.
-        // ASP.NET automatically gives us this through "Dependency Injection" (DI) —
-        // we just ask for it in the constructor and ASP.NET provides it.
         private readonly ApplicationDbContext _context;
 
-        // Constructor — runs when ASP.NET creates this controller
-        // ASP.NET sees we need ApplicationDbContext and automatically provides it
         public LoginController(ApplicationDbContext context)
         {
             _context = context;
         }
 
         // =====================================================================
-        // LOGIN PAGE — GET (when user VISITS the page)
+        // LOGIN PAGE — GET
         // =====================================================================
-        // [HttpGet] means: "this method runs when the user VISITS the page" (types URL or clicks link)
-        // As opposed to [HttpPost] which runs when a FORM IS SUBMITTED
         [HttpGet]
         public IActionResult Login_Page()
         {
-            // Simply show the login page with an empty form
             return View(new LoginViewModel());
         }
 
         // =====================================================================
-        // LOGIN PAGE — POST (when user SUBMITS the form)
+        // LOGIN PAGE — POST (Task #3: Error Handling + Task #5: Rate Limiting)
         // =====================================================================
-        // [HttpPost] means: "this method runs when the user clicks the Sign In button"
-        // The form data (email, password) is automatically put into the LoginViewModel object
         [HttpPost]
+        [ValidateAntiForgeryToken]  // Task #4: CSRF Protection
         public async Task<IActionResult> Login_Page(LoginViewModel model)
         {
-            // ---- Step 1: Check if the form is valid ----
-            // ModelState.IsValid checks ALL the [Required], [EmailAddress] rules we defined
-            // in LoginViewModel. If any rule fails, it returns false.
             if (!ModelState.IsValid)
             {
-                // Something is wrong (empty email, invalid format, etc.)
-                // Return to the same page — the validation errors will show automatically
                 return View(model);
             }
 
-            // ---- Step 2: Find the user in the database by email ----
-            // We search the Users table for a user with a matching email.
-            // .FirstOrDefaultAsync() returns the first match, or null if no match found.
-            // We also convert both to lowercase so "Ahmad@PHI.edu.jo" matches "ahmad@phi.edu.jo"
-            var user = await _context.Users
-                .FirstOrDefaultAsync(u => u.Email.ToLower() == model.Email.ToLower());
-
-            // ---- Step 3: Check if user exists ----
-            if (user == null)
+            try
             {
-                // No user found with this email
-                // ModelState.AddModelError adds a custom error message to show on the page
-                // The first parameter "" means it's a general error (not tied to a specific field)
-                ModelState.AddModelError("", "Invalid email or password");
+                // Find user by email
+                var user = await _context.Users
+                    .FirstOrDefaultAsync(u => u.Email.ToLower() == model.Email.ToLower());
+
+                // ===== Task #5: Check if account is locked =====
+                if (user != null && user.AccountLockedUntil.HasValue && user.AccountLockedUntil > DateTime.Now)
+                {
+                    TimeSpan timeRemaining = user.AccountLockedUntil.Value - DateTime.Now;
+                    ModelState.AddModelError("",
+                        $"Account temporarily locked. Try again in {(int)timeRemaining.TotalMinutes + 1} minutes.");
+                    return View(model);
+                }
+
+                // Check if user exists
+                if (user == null)
+                {
+                    ModelState.AddModelError("", "Invalid email or password");
+                    return View(model);
+                }
+
+                // Verify password
+                bool isPasswordCorrect = BCrypt.Net.BCrypt.Verify(model.Password, user.PasswordHash);
+
+                if (!isPasswordCorrect)
+                {
+                    // ===== Task #5: Track failed attempts =====
+                    user.FailedLoginAttempts++;
+
+                    if (user.FailedLoginAttempts >= 5)
+                    {
+                        user.AccountLockedUntil = DateTime.Now.AddMinutes(15);
+                        await _context.SaveChangesAsync();
+
+                        ModelState.AddModelError("",
+                            "Too many failed login attempts. Account locked for 15 minutes.");
+                        return View(model);
+                    }
+
+                    await _context.SaveChangesAsync();
+
+                    ModelState.AddModelError("",
+                        $"Invalid email or password. ({user.FailedLoginAttempts}/5 attempts)");
+                    return View(model);
+                }
+
+                // ===== Login successful — reset failed attempts =====
+                user.FailedLoginAttempts = 0;
+                user.AccountLockedUntil = null;
+                user.LastLoginAt = DateTime.Now;
+                await _context.SaveChangesAsync();
+
+                // Create authentication cookie
+                var claims = new List<Claim>
+                {
+                    new Claim(ClaimTypes.NameIdentifier, user.UserID.ToString()),
+                    new Claim(ClaimTypes.Name, user.Name),
+                    new Claim(ClaimTypes.Email, user.Email),
+                    new Claim(ClaimTypes.Role, user.Role)
+                };
+
+                var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                var principal = new ClaimsPrincipal(identity);
+
+                await HttpContext.SignInAsync(
+                    CookieAuthenticationDefaults.AuthenticationScheme,
+                    principal);
+
+                return RedirectToAction("Dashboard", "Dashboard");
+            }
+            catch (DbUpdateException)
+            {
+                // Task #3: Database error handling
+                ModelState.AddModelError("", "Database error: Please try again later.");
                 return View(model);
             }
-
-            // ---- Step 4: Verify the password ----
-            // BCrypt.Net.BCrypt.Verify() takes the plain-text password the user typed
-            // and compares it against the hashed password stored in the database.
-            // It does NOT decrypt the hash — it hashes the input and compares the two hashes.
-            bool isPasswordCorrect = BCrypt.Net.BCrypt.Verify(model.Password, user.PasswordHash);
-
-            if (!isPasswordCorrect)
+            catch (Exception)
             {
-                // Password doesn't match
-                ModelState.AddModelError("", "Invalid email or password");
+                // Task #3: General error handling
+                ModelState.AddModelError("", "An unexpected error occurred. Please try again.");
                 return View(model);
-                // NOTE: We say "Invalid email or password" for BOTH wrong email and wrong password.
-                // This is a security practice — we don't tell hackers WHICH one was wrong.
             }
-
-            // ---- Step 5: Create the authentication cookie (log the user in) ----
-            // "Claims" are pieces of information about the logged-in user that we store in the cookie.
-            // Think of them as the user's "ID card" that the browser carries on every request.
-            var claims = new List<Claim>
-            {
-                new Claim(ClaimTypes.NameIdentifier, user.UserID.ToString()), // User's ID number
-                new Claim(ClaimTypes.Name, user.Name),                        // User's display name
-                new Claim(ClaimTypes.Email, user.Email),                      // User's email
-                new Claim(ClaimTypes.Role, user.Role)                         // "Student" or "Admin"
-            };
-
-            // ClaimsIdentity wraps all claims into one "identity document"
-            var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-
-            // ClaimsPrincipal = the actual "person" holding the identity
-            var principal = new ClaimsPrincipal(identity);
-
-            // HttpContext.SignInAsync() creates the cookie and sends it to the browser
-            // From now on, every request from this browser will include this cookie
-            await HttpContext.SignInAsync(
-                CookieAuthenticationDefaults.AuthenticationScheme,
-                principal);
-
-            // ---- Step 6: Update last login time ----
-            user.LastLoginAt = DateTime.Now;
-            await _context.SaveChangesAsync();
-
-            // ---- Step 7: Redirect to Dashboard ----
-            // After successful login, take the user to the Dashboard page
-            return RedirectToAction("Dashboard", "Dashboard");
         }
 
         // =====================================================================
-        // REGISTER PAGE — GET (when user VISITS the page)
+        // REGISTER PAGE — GET
         // =====================================================================
         [HttpGet]
         public IActionResult Register_Page()
@@ -140,75 +132,73 @@ namespace Uni_Connect.Controllers
         }
 
         // =====================================================================
-        // REGISTER PAGE — POST (when user SUBMITS the form)
+        // REGISTER PAGE — POST (Task #3: Error Handling + Task #6: Sanitization)
         // =====================================================================
         [HttpPost]
+        [ValidateAntiForgeryToken]  // Task #4: CSRF Protection
         public async Task<IActionResult> Register_Page(RegisterViewModel model)
         {
-            // ---- Step 1: Check if the form is valid ----
             if (!ModelState.IsValid)
             {
                 return View(model);
             }
 
-            // ---- Step 2: Validate university email domain ----
-            // FR1 says: "Only @philadelphia.edu.jo email addresses accepted at registration"
-            // We extract the part after @ and check it
+            // Validate university email domain
             if (!model.Email.ToLower().EndsWith("@philadelphia.edu.jo"))
             {
                 ModelState.AddModelError("Email", "Only Philadelphia University emails (@philadelphia.edu.jo) are allowed");
                 return View(model);
             }
 
-            // ---- Step 3: Check if email already exists ----
-            // We don't want two accounts with the same email
-            bool emailExists = await _context.Users
-                .AnyAsync(u => u.Email.ToLower() == model.Email.ToLower());
-
-            if (emailExists)
+            try
             {
-                ModelState.AddModelError("Email", "An account with this email already exists");
+                // Check if email already exists
+                bool emailExists = await _context.Users
+                    .AnyAsync(u => u.Email.ToLower() == model.Email.ToLower());
+
+                if (emailExists)
+                {
+                    ModelState.AddModelError("Email", "An account with this email already exists");
+                    return View(model);
+                }
+
+                // Extract University ID from email
+                string universityId = model.Email.Split('@')[0];
+
+                // Hash the password
+                string hashedPassword = BCrypt.Net.BCrypt.HashPassword(model.Password);
+
+                // Task #6: Input Sanitization — Trim spaces from name and email
+                var newUser = new User
+                {
+                    UniversityID = universityId,
+                    Name = model.Name?.Trim() ?? "",
+                    Username = universityId,
+                    Email = model.Email?.ToLower().Trim() ?? "",
+                    PasswordHash = hashedPassword,
+                    Role = "Student",
+                    Points = 50,
+                    IsDeleted = false,
+                    CreatedAt = DateTime.Now,
+                    ProfileImageUrl = null
+                };
+
+                _context.Users.Add(newUser);
+                await _context.SaveChangesAsync();
+
+                TempData["SuccessMessage"] = "Account created successfully! You earned +50 welcome points 🎉 Please sign in.";
+                return RedirectToAction("Login_Page");
+            }
+            catch (DbUpdateException)
+            {
+                ModelState.AddModelError("", "Database error: Please try again later.");
                 return View(model);
             }
-
-            // ---- Step 4: Extract University ID from email ----
-            // Email format is: 202210882@philadelphia.edu.jo
-            // We take everything before the @ to get the student ID: "202210882"
-            string universityId = model.Email.Split('@')[0];
-
-            // ---- Step 5: Hash the password ----
-            // BCrypt.Net.BCrypt.HashPassword() takes "MyPassword123" and turns it into
-            // something like "$2a$11$xKz3Qw..." — this is what we store in the database.
-            // Even if someone steals the database, they can't figure out the original password.
-            string hashedPassword = BCrypt.Net.BCrypt.HashPassword(model.Password);
-
-            // ---- Step 6: Create the new User object ----
-            // We fill in all the fields that the User model needs
-            var newUser = new User
+            catch (Exception)
             {
-                UniversityID = universityId,               // Extracted from email
-                Name = model.Name,                          // From the form
-                Username = universityId,                    // Default username = student ID (can change later)
-                Email = model.Email.ToLower(),              // Store in lowercase for consistency
-                PasswordHash = hashedPassword,              // The BCrypt hash, NOT the plain password
-                Role = "Student",                           // All new registrations are Students (FR1)
-                Points = 50,                                // +50 welcome bonus (Section 5.7.1 of your doc)
-                IsDeleted = false,                          // Account is active
-                CreatedAt = DateTime.Now,                   // When the account was created
-                ProfileImageUrl = null                      // No profile picture yet
-            };
-
-            // ---- Step 7: Save to database ----
-            // _context.Users.Add() stages the new user (prepares it)
-            // SaveChangesAsync() actually sends the SQL INSERT command to the database
-            _context.Users.Add(newUser);
-            await _context.SaveChangesAsync();
-
-            // ---- Step 8: Redirect to Login with success message ----
-            // TempData is a way to send a one-time message to the NEXT page.
-            // It survives one redirect and then disappears.
-            TempData["SuccessMessage"] = "Account created successfully! You earned +50 welcome points 🎉 Please sign in.";
-            return RedirectToAction("Login_Page");
+                ModelState.AddModelError("", "An unexpected error occurred. Please try again.");
+                return View(model);
+            }
         }
 
         // =====================================================================
@@ -216,15 +206,12 @@ namespace Uni_Connect.Controllers
         // =====================================================================
         public async Task<IActionResult> Logout()
         {
-            // Delete the authentication cookie — user is no longer logged in
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-
-            // Redirect back to login page
             return RedirectToAction("Login_Page");
         }
 
         // =====================================================================
-        // FORGOT PASSWORD PAGE — GET (shows the email form)
+        // FORGOT PASSWORD PAGE — GET
         // =====================================================================
         [HttpGet]
         public IActionResult ForgotPass_Page()
@@ -233,9 +220,10 @@ namespace Uni_Connect.Controllers
         }
 
         // =====================================================================
-        // FORGOT PASSWORD PAGE — POST (checks if email exists, shows confirmation)
+        // FORGOT PASSWORD PAGE — POST (Task #2: Full forgot password flow)
         // =====================================================================
         [HttpPost]
+        [ValidateAntiForgeryToken]  // Task #4: CSRF Protection
         public async Task<IActionResult> ForgotPass_Page(ForgotPasswordViewModel model)
         {
             if (!ModelState.IsValid)
@@ -243,17 +231,97 @@ namespace Uni_Connect.Controllers
                 return View(model);
             }
 
-            // Check if a user with this email exists
-            var user = await _context.Users
-                .FirstOrDefaultAsync(u => u.Email.ToLower() == model.Email.ToLower());
+            try
+            {
+                var user = await _context.Users
+                    .FirstOrDefaultAsync(u => u.Email.ToLower() == model.Email.ToLower());
 
-            // Always show success message even if email not found (security: don't reveal which emails exist)
-            ViewBag.EmailSent = true;
-            ViewBag.SentToEmail = model.Email;
+                // Generate 6-digit reset token
+                string resetToken = new Random().Next(100000, 999999).ToString();
 
-            // In a real system, you would send an actual email here.
-            // For now, we just show the confirmation screen.
-            return View(model);
+                if (user != null)
+                {
+                    user.PasswordResetToken = resetToken;
+                    user.PasswordResetTokenExpiry = DateTime.Now.AddMinutes(30);
+                    await _context.SaveChangesAsync();
+
+                    // TODO: Send email with reset token here
+                    // For now, token is stored in DB — can be tested manually
+                }
+
+                // Always show success (security: don't reveal if email exists)
+                ViewBag.EmailSent = true;
+                ViewBag.SentToEmail = model.Email;
+                return View(model);
+            }
+            catch (Exception)
+            {
+                ModelState.AddModelError("", "An error occurred. Please try again.");
+                return View(model);
+            }
+        }
+
+        // =====================================================================
+        // RESET PASSWORD PAGE — GET (Task #2)
+        // =====================================================================
+        [HttpGet]
+        public IActionResult ResetPassword(string token)
+        {
+            if (string.IsNullOrEmpty(token))
+            {
+                return RedirectToAction("ForgotPass_Page");
+            }
+
+            var model = new ResetPasswordViewModel { ResetToken = token };
+            return View("ResetPassword_Page", model);
+        }
+
+        // =====================================================================
+        // RESET PASSWORD PAGE — POST (Task #2)
+        // =====================================================================
+        [HttpPost]
+        [ValidateAntiForgeryToken]  // Task #4: CSRF Protection
+        public async Task<IActionResult> ResetPassword(ResetPasswordViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View("ResetPassword_Page", model);
+            }
+
+            try
+            {
+                // Find user with matching reset token
+                var user = await _context.Users
+                    .FirstOrDefaultAsync(u => u.PasswordResetToken == model.ResetToken);
+
+                if (user == null)
+                {
+                    ModelState.AddModelError("", "Invalid reset code");
+                    return View("ResetPassword_Page", model);
+                }
+
+                // Check if token expired
+                if (user.PasswordResetTokenExpiry < DateTime.Now)
+                {
+                    ModelState.AddModelError("", "Reset code has expired. Please request a new one.");
+                    return View("ResetPassword_Page", model);
+                }
+
+                // Hash new password and save
+                user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(model.NewPassword);
+                user.PasswordResetToken = null;
+                user.PasswordResetTokenExpiry = null;
+
+                await _context.SaveChangesAsync();
+
+                TempData["SuccessMessage"] = "Password reset successfully! Please sign in with your new password.";
+                return RedirectToAction("Login_Page");
+            }
+            catch (Exception)
+            {
+                ModelState.AddModelError("", "An error occurred during password reset. Please try again.");
+                return View("ResetPassword_Page", model);
+            }
         }
     }
 }

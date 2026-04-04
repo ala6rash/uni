@@ -46,6 +46,7 @@
     }
 
     <form asp-action="Login_Page" method="post">
+      @Html.AntiForgeryToken()
       <div class="auth-card">
 
         @* 

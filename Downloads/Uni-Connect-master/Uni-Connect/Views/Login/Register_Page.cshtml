@@ -46,6 +46,7 @@
         method="post" means it will call the [HttpPost] version of Register_Page
     *@
     <form asp-action="Register_Page" method="post">
+      @Html.AntiForgeryToken()
       <div class="auth-card" id="reg-form">
 
         @* 
