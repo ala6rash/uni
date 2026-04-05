@@ -2,7 +2,7 @@
     This page receives a LoginViewModel from the controller.
     The form sends Email and Password back to the controller when submitted.
 *@
-@model Uni_Connect.Models.LoginViewModel
+@model Uni_Connect.ViewModels.LoginViewModel
 
 @{
     Layout = null;
@@ -21,7 +21,7 @@
   <a asp-controller="Home" asp-action="Index" class="nav-logo"><div class="nav-logo-icon">🎓</div><span>UniConnect</span></a>
   <div style="display:flex;align-items:center;gap:12px">
     <span style="font-size:14px;color:var(--text-2)">New student?</span>
-    <a asp-controller="Login" asp-action="Register_Page"><button class="btn btn-primary btn-sm">Join Free</button></a>
+    <a asp-controller="Login" asp-action="Register"><button class="btn btn-primary btn-sm">Join Free</button></a>
   </div>
 </nav>
 <div class="auth-body">
@@ -45,7 +45,7 @@
       </div>
     }
 
-    <form asp-action="Login_Page" method="post">
+    <form asp-action="Login" method="post">
       @Html.AntiForgeryToken()
       <div class="auth-card">
 
@@ -71,14 +71,14 @@
         </div>
 
         <div style="text-align:right;margin-bottom:22px">
-          <a asp-controller="Login" asp-action="ForgotPass_Page" style="font-size:13px;color:var(--indigo);font-weight:600">Forgot password?</a>
+          <a asp-controller="Login" asp-action="ForgotPassword" style="font-size:13px;color:var(--indigo);font-weight:600">Forgot password?</a>
         </div>
 
         @* Submit button — sends the form to LoginController.Login_Page [HttpPost] *@
         <button type="submit" class="btn btn-primary btn-full btn-lg">Sign In →</button>
 
         <div class="auth-divider"><span>or</span></div>
-        <p style="text-align:center;font-size:14px;color:var(--text-2)">Don't have an account? <a asp-controller="Login" asp-action="Register_Page" style="color:var(--indigo);font-weight:700">Join Free →</a></p>
+        <p style="text-align:center;font-size:14px;color:var(--text-2)">Don't have an account? <a asp-controller="Login" asp-action="Register" style="color:var(--indigo);font-weight:700">Join Free →</a></p>
       </div>
     </form>
 

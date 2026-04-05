@@ -5,7 +5,7 @@
     The controller's Register_Page() [GET] method sends: View(new RegisterViewModel())
     So this page receives that empty RegisterViewModel and builds the form around it.
 *@
-@model Uni_Connect.Models.RegisterViewModel
+@model Uni_Connect.ViewModels.RegisterViewModel
 
 @* 
     Layout = null means: "Don't use the shared _Layout.cshtml wrapper"
@@ -28,7 +28,7 @@
         <a asp-controller="Home" asp-action="Index" class="nav-logo"><div class="nav-logo-icon">🎓</div><span>UniConnect</span></a>
   <div style="display:flex;align-items:center;gap:12px">
     <span style="font-size:14px;color:var(--text-2)">Already have an account?</span>
-    <a asp-controller="Login" asp-action="Login_Page"><button class="btn btn-ghost btn-sm">Sign In</button></a>
+    <a asp-controller="Login" asp-action="Login"><button class="btn btn-ghost btn-sm">Sign In</button></a>
   </div>
 </nav>
 <div class="auth-body">
@@ -41,11 +41,11 @@
 
     @* 
         ===== WHAT IS asp-action? =====
-        <form asp-action="Register_Page"> means:
+        <form asp-action="Register"> means:
         "When this form is submitted, send the data to the Register_Page method in this controller"
         method="post" means it will call the [HttpPost] version of Register_Page
     *@
-    <form asp-action="Register_Page" method="post">
+    <form asp-action="Register" method="post">
       @Html.AntiForgeryToken()
       <div class="auth-card" id="reg-form">
 

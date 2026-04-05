@@ -17,7 +17,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
     {
-        options.LoginPath = "/Login/Login_Page";        // Where to redirect if not logged in
+        options.LoginPath = "/Login/Login";        // Where to redirect if not logged in
         options.LogoutPath = "/Login/Logout";            // Where to go when logging out
         options.ExpireTimeSpan = TimeSpan.FromHours(24); // Cookie expires after 24 hours
         options.SlidingExpiration = true;                // Resets the 24h timer on each request

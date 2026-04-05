@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace Uni_Connect.Models
+namespace Uni_Connect.ViewModels
 {
     /// <summary>
     /// This ViewModel represents the data that the Login form sends to the server.

@@ -20,7 +20,7 @@ namespace Uni_Connect.Controllers
         {
             // 1. Get current user's ID from the cookie
             var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (string.IsNullOrEmpty(userIdString)) return RedirectToAction("Login_Page", "Login");
+            if (string.IsNullOrEmpty(userIdString)) return RedirectToAction("Login", "Login");
 
             int userId = int.Parse(userIdString);
 
@@ -28,7 +28,7 @@ namespace Uni_Connect.Controllers
             var user = await _context.Users
                 .FirstOrDefaultAsync(u => u.UserID == userId);
 
-            if (user == null) return RedirectToAction("Login_Page", "Login");
+            if (user == null) return RedirectToAction("Login", "Login");
 
             // 3. Fetch recent posts (Academic questions)
             // We include User and Category navigation properties so we can show author names and faculty tags

@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace Uni_Connect.Models
+namespace Uni_Connect.ViewModels
 {
     /// <summary>
     /// This ViewModel represents the data submitted when a user resets their password.

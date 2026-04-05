@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 using Uni_Connect.Models;
+using Uni_Connect.ViewModels;
 
 namespace Uni_Connect.Controllers
 {
@@ -16,21 +17,15 @@ namespace Uni_Connect.Controllers
             _context = context;
         }
 
-        // =====================================================================
-        // LOGIN PAGE — GET
-        // =====================================================================
         [HttpGet]
-        public IActionResult Login_Page()
+        public IActionResult Login()
         {
             return View(new LoginViewModel());
         }
 
-        // =====================================================================
-        // LOGIN PAGE — POST (Task #3: Error Handling + Task #5: Rate Limiting)
-        // =====================================================================
         [HttpPost]
-        [ValidateAntiForgeryToken]  // Task #4: CSRF Protection
-        public async Task<IActionResult> Login_Page(LoginViewModel model)
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Login(LoginViewModel model)
         {
             if (!ModelState.IsValid)
             {
@@ -122,21 +117,15 @@ namespace Uni_Connect.Controllers
             }
         }
 
-        // =====================================================================
-        // REGISTER PAGE — GET
-        // =====================================================================
         [HttpGet]
-        public IActionResult Register_Page()
+        public IActionResult Register()
         {
             return View(new RegisterViewModel());
         }
 
-        // =====================================================================
-        // REGISTER PAGE — POST (Task #3: Error Handling + Task #6: Sanitization)
-        // =====================================================================
         [HttpPost]
-        [ValidateAntiForgeryToken]  // Task #4: CSRF Protection
-        public async Task<IActionResult> Register_Page(RegisterViewModel model)
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Register(RegisterViewModel model)
         {
             if (!ModelState.IsValid)
             {
@@ -187,7 +176,7 @@ namespace Uni_Connect.Controllers
                 await _context.SaveChangesAsync();
 
                 TempData["SuccessMessage"] = "Account created successfully! You earned +50 welcome points 🎉 Please sign in.";
-                return RedirectToAction("Login_Page");
+                return RedirectToAction("Login");
             }
             catch (DbUpdateException)
             {
@@ -207,24 +196,18 @@ namespace Uni_Connect.Controllers
         public async Task<IActionResult> Logout()
         {
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-            return RedirectToAction("Login_Page");
+            return RedirectToAction("Login");
         }
 
-        // =====================================================================
-        // FORGOT PASSWORD PAGE — GET
-        // =====================================================================
         [HttpGet]
-        public IActionResult ForgotPass_Page()
+        public IActionResult ForgotPassword()
         {
             return View(new ForgotPasswordViewModel());
         }
 
-        // =====================================================================
-        // FORGOT PASSWORD PAGE — POST (checks if email exists, generates token)
-        // =====================================================================
         [HttpPost]
-        [ValidateAntiForgeryToken]  // ← Add this for CSRF protection
-        public async Task<IActionResult> ForgotPass_Page(ForgotPasswordViewModel model)
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ForgotPassword(ForgotPasswordViewModel model)
         {
             // Step 1: Validate form is filled out correctly
             if (!ModelState.IsValid)
@@ -288,12 +271,12 @@ namespace Uni_Connect.Controllers
             if (string.IsNullOrEmpty(token))
             {
                 ModelState.AddModelError("", "Invalid or expired reset link");
-                return RedirectToAction("ForgotPass_Page");
+                return RedirectToAction("ForgotPassword");
             }
             
             // Create a new ViewModel and put the token in it (hidden field in form)
             var model = new ResetPasswordViewModel { ResetToken = token };
-            return View("ResetPassword_Page", model);
+            return View("ResetPassword", model);
         }
 
         // =====================================================================
@@ -308,7 +291,7 @@ namespace Uni_Connect.Controllers
             // Step 1: Validate the form (token, password, confirm match, etc.)
             if (!ModelState.IsValid)
             {
-                return View("ResetPassword_Page", model);
+                return View("ResetPassword", model);
             }
 
             try
@@ -321,14 +304,14 @@ namespace Uni_Connect.Controllers
                 if (user == null)
                 {
                     ModelState.AddModelError("", "Invalid reset code. Please try again.");
-                    return View("ResetPassword_Page", model);
+                    return View("ResetPassword", model);
                 }
 
                 // Step 4: Validate token hasn't expired (30 minutes)
                 if (user.PasswordResetTokenExpiry.HasValue && user.PasswordResetTokenExpiry < DateTime.Now)
                 {
                     ModelState.AddModelError("", "Reset code has expired. Please request a new one.");
-                    return View("ResetPassword_Page", model);
+                    return View("ResetPassword", model);
                 }
 
                 // Step 5: Hash new password using BCrypt
@@ -346,19 +329,19 @@ namespace Uni_Connect.Controllers
 
                 // Step 8: Redirect to login with success message
                 TempData["SuccessMessage"] = "✅ Password reset successfully! Please sign in with your new password.";
-                return RedirectToAction("Login_Page");
+                return RedirectToAction("Login");
             }
             catch (DbUpdateException)
             {
                 // Database error
                 ModelState.AddModelError("", "Database error: Please try again later.");
-                return View("ResetPassword_Page", model);
+                return View("ResetPassword", model);
             }
             catch (Exception)
             {
                 // Unexpected error
                 ModelState.AddModelError("", "An unexpected error occurred. Please try again.");
-                return View("ResetPassword_Page", model);
+                return View("ResetPassword", model);
             }
         }
     }
