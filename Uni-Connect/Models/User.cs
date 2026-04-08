@@ -8,7 +8,7 @@
         public string Username { get; set; }
         public string Email { get; set; }
         public string PasswordHash { get; set; }
-        public string Role { get; set; } // Student, Admin
+        public string Role { get; set; } 
         public int Points { get; set; }
         public bool IsDeleted { get; set; } = false;
 
@@ -16,7 +16,14 @@
         public DateTime CreatedAt { get; set; }
         public DateTime? LastLoginAt { get; set; }
 
-        // Navigation Properties
+       
+        public string? PasswordResetToken { get; set; }
+        public DateTime? PasswordResetTokenExpiry { get; set; }
+
+        
+        public int FailedLoginAttempts { get; set; } = 0;
+        public DateTime? AccountLockedUntil { get; set; }
+
         public ICollection<Post> Posts { get; set; }
         public ICollection<Answer> Answers { get; set; }
         public ICollection<Request> Requests { get; set; }

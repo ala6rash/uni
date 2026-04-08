@@ -1,12 +1,21 @@
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 using Uni_Connect.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
 builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
+        options.LoginPath = "/Login/Login_Page";        
+        options.LogoutPath = "/Login/Logout";            
+        options.ExpireTimeSpan = TimeSpan.FromHours(24); 
+        options.SlidingExpiration = true;              
+    });
 
 var app = builder.Build();
 
@@ -23,6 +32,11 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+// ===== ADDED: Authentication must come BEFORE Authorization =====
+// UseAuthentication = "read the cookie and figure out who this user is"
+// UseAuthorization  = "check if this user is ALLOWED to access this page"
+// Order matters! You can't check permissions before you know who they are.
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(

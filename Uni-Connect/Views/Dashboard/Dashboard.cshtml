@@ -11,7 +11,7 @@
 <!-- NAVBAR -->
 <nav class="navbar">
   <button class="nav-hamburger" id="hamburger"><span></span><span></span><span></span></button>
-  <a href="dashboard.html" class="nav-logo">
+        <a asp-controller="Dashboard" asp-action="Dashboard" class="nav-logo">
     <div class="nav-logo-icon">🎓</div><span>UniConnect</span>
   </a>
   <div class="nav-search">
@@ -31,7 +31,7 @@
         <a href="settings.html"><div class="nav-dropdown-item">⚙️ Settings</div></a>
         <a href="points.html"><div class="nav-dropdown-item">🪙 Points &amp; Rewards</div></a>
         <div class="nav-dropdown-sep"></div>
-        <div class="nav-dropdown-item logout" onclick="doLogout()">🚪 Sign Out</div>
+                    
       </div>
     </div>
   </div>
@@ -70,7 +70,10 @@
         <div class="pts-widget-sub">160 pts to Verified Tutor</div>
       </div>
     </a>
-    <div class="sidebar-logout" onclick="doLogout()">🚪 Sign Out</div>
+            <form asp-controller="Login" asp-action="Logout" method="post" id="logoutForm">
+                @Html.AntiForgeryToken()
+                <button type="submit" class="nav-dropdown-item logout" style="background:none;border:none;width:100%;text-align:left;font-family:inherit;padding-left:15px">🚪 Sign Out</button>
+            </form>
   </aside>
 
   <main class="main">
@@ -325,8 +328,7 @@ function escapeHtml(str){return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').r
 function toggleUserMenu(){const d=document.getElementById('user-dropdown');if(d)d.classList.toggle('open')}
 document.addEventListener('click',e=>{const d=document.getElementById('user-dropdown');if(d&&!e.target.closest('.nav-user-menu'))d.classList.remove('open')})
 
-// ── Logout ──
-function doLogout(){if(confirm('Are you sure you want to sign out?'))window.location.href='login.html'}
+
 
 // ── LIVE SEARCH ──
 const QUESTIONS=[
