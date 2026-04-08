@@ -71,8 +71,13 @@
         @* --- University Email Field --- *@
         <div class="form-group">
           <label class="form-label" asp-for="Email">University Email</label>
-          <input class="form-input" asp-for="Email" type="email" placeholder="StudentID@philadelphia.edu.jo" />
-          <div class="form-hint">Format: StudentID@philadelphia.edu.jo</div>
+          <div style="position:relative">
+            <input class="form-input" asp-for="Email" id="emailInput" type="text"
+                   placeholder="202210882@philadelphia.edu.jo"
+                   oninput="validateEmail(this)" />
+            <div id="emailCounter" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);font-size:12px;font-weight:700;color:#94A3B8">0/9</div>
+          </div>
+          <div class="form-hint" id="emailHint">Enter your 9-digit Student ID then @@philadelphia.edu.jo — example: <strong>202210882</strong>@@philadelphia.edu.jo</div>
           <span asp-validation-for="Email" class="field-validation-error"></span>
         </div>
 
@@ -141,6 +146,46 @@
 <script src="~/lib/jquery/dist/jquery.min.js"></script>
 <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
 <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
-
+<script>
+function validateEmail(input) {
+    var val = input.value.trim();
+    var atIdx = val.indexOf('@@');
+    var idPart = atIdx >= 0 ? val.substring(0, atIdx) : val;
+    var counter = document.getElementById('emailCounter');
+    var hint = document.getElementById('emailHint');
+    var digits = idPart.replace(/\D/g, '');
+    counter.textContent = digits.length + '/9';
+    var domain = '@@philadelphia.edu.jo';
+    var isValid = /^\d{9}$/.test(idPart) && val.endsWith(domain);
+    var hasLetters = idPart.length > 0 && !/^\d+$/.test(idPart);
+    var tooLong = digits.length > 9;
+    if (isValid) {
+        input.style.borderColor = '#10B981';
+        counter.style.color = '#10B981';
+        hint.style.color = '#10B981';
+        hint.textContent = '✓ Correct student ID format';
+    } else if (hasLetters) {
+        input.style.borderColor = '#F43F5E';
+        counter.style.color = '#F43F5E';
+        hint.style.color = '#F43F5E';
+        hint.textContent = '✗ Student ID must contain numbers only — no letters!';
+    } else if (tooLong) {
+        input.style.borderColor = '#F43F5E';
+        counter.style.color = '#F43F5E';
+        hint.style.color = '#F43F5E';
+        hint.textContent = '✗ Student ID must be exactly 9 digits — yours has ' + digits.length;
+    } else if (atIdx >= 0 && !val.endsWith(domain)) {
+        input.style.borderColor = '#F59E0B';
+        counter.style.color = '#F59E0B';
+        hint.style.color = '#F59E0B';
+        hint.textContent = '⚠ Domain must be @@philadelphia.edu.jo';
+    } else {
+        input.style.borderColor = '';
+        counter.style.color = '#94A3B8';
+        hint.style.color = '';
+        hint.innerHTML = 'Enter your 9-digit Student ID + @@philadelphia.edu.jo — e.g. <strong>202210882@@philadelphia.edu.jo</strong>';
+    }
+}
+</script>
 </body>
 </html>

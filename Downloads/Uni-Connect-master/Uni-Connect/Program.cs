@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 using Uni_Connect.Models;
+using Uni_Connect.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,6 +9,9 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+// Register EmailService so controllers can use it via dependency injection
+builder.Services.AddScoped<EmailService>();
 
 // ===== ADDED: Cookie Authentication =====
 // This tells ASP.NET: "Use cookies to track who is logged in"

@@ -56,10 +56,12 @@
         *@
         <div asp-validation-summary="ModelOnly" class="validation-error-box"></div>
 
-        @* --- University Email Field --- *@
+        @* --- University Email / Student ID Field --- *@
         <div class="form-group">
-          <label class="form-label" asp-for="Email">University Email</label>
-          <input class="form-input" asp-for="Email" type="email" placeholder="StudentID@philadelphia.edu.jo" />
+          <label class="form-label" asp-for="Email">Student ID or University Email</label>
+          <input class="form-input" asp-for="Email" type="text"
+                 placeholder="202210882 or 202210882@philadelphia.edu.jo" autocomplete="username"/>
+          <div class="form-hint">You can enter just your 9-digit Student ID</div>
           <span asp-validation-for="Email" class="field-validation-error"></span>
         </div>
 

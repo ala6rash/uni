@@ -24,6 +24,11 @@ namespace Uni_Connect.Models
         public int FailedLoginAttempts { get; set; } = 0;
         public DateTime? AccountLockedUntil { get; set; }
 
+        // Email Verification
+        public bool IsEmailVerified { get; set; } = true;
+        public string? EmailVerificationCode { get; set; }
+        public DateTime? EmailVerificationExpiry { get; set; }
+
         // Navigation Properties
         public ICollection<Post> Posts { get; set; }
         public ICollection<Answer> Answers { get; set; }

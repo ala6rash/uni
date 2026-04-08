@@ -8,10 +8,10 @@ namespace Uni_Connect.ViewModels
     /// </summary>
     public class LoginViewModel
     {
-        // --- University Email field ---
-        [Required(ErrorMessage = "Please enter your university email")]
-        [EmailAddress(ErrorMessage = "Please enter a valid email address")]
-        [Display(Name = "University Email")]
+        // --- Student ID or University Email ---
+        // Accepts: "202210882" OR "202210882@philadelphia.edu.jo"
+        [Required(ErrorMessage = "Please enter your Student ID or university email")]
+        [Display(Name = "Student ID or Email")]
         public string Email { get; set; }
 
         // --- Password field ---

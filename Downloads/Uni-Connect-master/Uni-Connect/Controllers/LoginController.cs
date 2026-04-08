@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 using Uni_Connect.Models;
+using Uni_Connect.Services;
 using Uni_Connect.ViewModels;
 
 namespace Uni_Connect.Controllers
@@ -11,10 +12,12 @@ namespace Uni_Connect.Controllers
     public class LoginController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly EmailService _emailService;
 
-        public LoginController(ApplicationDbContext context)
+        public LoginController(ApplicationDbContext context, EmailService emailService)
         {
             _context = context;
+            _emailService = emailService;
         }
 
         [HttpGet]
@@ -34,9 +37,14 @@ namespace Uni_Connect.Controllers
 
             try
             {
+                // Allow login with bare 9-digit ID OR full email
+                string loginEmail = model.Email.Trim();
+                if (!loginEmail.Contains('@'))
+                    loginEmail = loginEmail + "@philadelphia.edu.jo";
+
                 // Find user by email
                 var user = await _context.Users
-                    .FirstOrDefaultAsync(u => u.Email.ToLower() == model.Email.ToLower());
+                    .FirstOrDefaultAsync(u => u.Email.ToLower() == loginEmail.ToLower());
 
                 // ===== Task #5: Check if account is locked =====
                 if (user != null && user.AccountLockedUntil.HasValue && user.AccountLockedUntil > DateTime.Now)
@@ -78,6 +86,8 @@ namespace Uni_Connect.Controllers
                         $"Invalid email or password. ({user.FailedLoginAttempts}/5 attempts)");
                     return View(model);
                 }
+
+
 
                 // ===== Login successful — reset failed attempts =====
                 user.FailedLoginAttempts = 0;
@@ -132,10 +142,12 @@ namespace Uni_Connect.Controllers
                 return View(model);
             }
 
-            // Validate university email domain
-            if (!model.Email.ToLower().EndsWith("@philadelphia.edu.jo"))
+            // Validate email format: exactly 9 digits + @philadelphia.edu.jo
+            var emailLower = model.Email.Trim().ToLower();
+            if (!System.Text.RegularExpressions.Regex.IsMatch(emailLower, @"^\d{9}@philadelphia\.edu\.jo$"))
             {
-                ModelState.AddModelError("Email", "Only Philadelphia University emails (@philadelphia.edu.jo) are allowed");
+                ModelState.AddModelError("Email",
+                    "Email must be your 9-digit Student ID followed by @philadelphia.edu.jo  (e.g. 202210882@philadelphia.edu.jo)");
                 return View(model);
             }
 
@@ -143,7 +155,7 @@ namespace Uni_Connect.Controllers
             {
                 // Check if email already exists
                 bool emailExists = await _context.Users
-                    .AnyAsync(u => u.Email.ToLower() == model.Email.ToLower());
+                    .AnyAsync(u => u.Email.ToLower() == emailLower);
 
                 if (emailExists)
                 {
@@ -151,25 +163,26 @@ namespace Uni_Connect.Controllers
                     return View(model);
                 }
 
-                // Extract University ID from email
-                string universityId = model.Email.Split('@')[0];
+                // Extract University ID from email (the 9 digits before @)
+                string universityId = emailLower.Split('@')[0];
 
                 // Hash the password
                 string hashedPassword = BCrypt.Net.BCrypt.HashPassword(model.Password);
 
-                // Task #6: Input Sanitization — Trim spaces from name and email
+                // Create user as VERIFIED by default
                 var newUser = new User
                 {
-                    UniversityID = universityId,
-                    Name = model.Name?.Trim() ?? "",
-                    Username = universityId,
-                    Email = model.Email?.ToLower().Trim() ?? "",
-                    PasswordHash = hashedPassword,
-                    Role = "Student",
-                    Points = 50,
-                    IsDeleted = false,
-                    CreatedAt = DateTime.Now,
-                    ProfileImageUrl = null
+                    UniversityID       = universityId,
+                    Name               = model.Name?.Trim() ?? "",
+                    Username           = universityId,
+                    Email              = emailLower,
+                    PasswordHash       = hashedPassword,
+                    Role               = "Student",
+                    Points             = 50,
+                    IsDeleted          = false,
+                    CreatedAt          = DateTime.Now,
+                    ProfileImageUrl    = null,
+                    IsEmailVerified    = true // Verification removed per request
                 };
 
                 _context.Users.Add(newUser);
@@ -190,12 +203,17 @@ namespace Uni_Connect.Controllers
             }
         }
 
+
+
         // =====================================================================
-        // LOGOUT
+        // LOGOUT  — POST only (security: prevents CSRF GET-based logout attacks)
         // =====================================================================
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Logout()
         {
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            TempData["SuccessMessage"] = "You have been signed out successfully.";
             return RedirectToAction("Login");
         }
 
