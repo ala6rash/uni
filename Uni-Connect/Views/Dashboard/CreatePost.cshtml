@@ -1,0 +1,756 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width,initial-scale=1.0" name="viewport" />
+    <title>Ask a Question — UniConnect</title>
+    <link href="~/css/CreatePost.css" rel="stylesheet" />
+</head>
+
+<body>
+
+    <!-- ══════════════════════════════════════════
+       NAVBAR
+  ══════════════════════════════════════════ -->
+    <nav class="navbar">
+        <button class="nav-hamburger" id="hamburger"><span></span><span></span><span></span></button>
+        <a class="nav-logo" href="dashboard.html">
+            <div class="nav-logo-icon">🎓</div>
+            <span>UniConnect</span>
+        </a>
+        <div class="nav-search">
+            <input autocomplete="off" class="form-input" placeholder="🔍  Search questions, courses..." />
+        </div>
+        <div class="nav-actions">
+            <a class="nav-bell" href="notifications.html">🔔<span class="nav-bell-badge">3</span></a>
+            <div class="nav-user-menu">
+                <div class="nav-user-btn" onclick="toggleUserMenu()">
+                    <div class="av av-sm"><img alt="Ahmad" src="https://i.pravatar.cc/36?img=11" /></div>
+                    <span class="nav-username">Ahmad</span>
+                    <span class="nav-user-chevron">▾</span>
+                </div>
+                <div class="nav-user-dropdown" id="user-dropdown">
+                    <a href="profile.html"><div class="nav-dropdown-item">👤 My Profile</div></a>
+                    <a href="settings.html"><div class="nav-dropdown-item">⚙️ Settings</div></a>
+                    <a href="points.html"><div class="nav-dropdown-item">🪙 Points &amp; Rewards</div></a>
+                    <div class="nav-dropdown-sep"></div>
+                    <div class="nav-dropdown-item logout" onclick="doLogout()">🚪 Sign Out</div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+    <div class="app-wrap">
+
+        <!-- ══════════════════════════════════════════
+         SIDEBAR
+    ══════════════════════════════════════════ -->
+        <aside class="sidebar" id="sidebar">
+            <a class="sidebar-user" href="profile.html">
+                <div class="av av-md"><img alt="Ahmad" src="https://i.pravatar.cc/44?img=11" /></div>
+                <div>
+                    <div class="sidebar-user-name">Ahmad K.</div>
+                    <div class="sidebar-user-pts">🪙 840 pts</div>
+                </div>
+            </a>
+            <nav class="sidebar-nav">
+                <a href="dashboard.html">
+                    <div class="nav-item"><span class="ni">🏠</span>Home Feed</div>
+                </a>
+                <a href="create-post.html">
+                    <div class="nav-item active"><span class="ni">✏️</span>Ask a Question</div>
+                </a>
+                <a href="sessions.html">
+                    <div class="nav-item"><span class="ni">💬</span>My Sessions</div>
+                </a>
+                <a href="leaderboard.html">
+                    <div class="nav-item"><span class="ni">🏆</span>Leaderboard</div>
+                </a>
+                <a href="notifications.html">
+                    <div class="nav-item"><span class="ni">🔔</span>Notifications<span class="nav-badge">3</span></div>
+                </a>
+                <a href="profile.html">
+                    <div class="nav-item"><span class="ni">👤</span>My Profile</div>
+                </a>
+                <a href="points.html">
+                    <div class="nav-item"><span class="ni">🪙</span>Points &amp; Rewards</div>
+                </a>
+                <a href="settings.html">
+                    <div class="nav-item"><span class="ni">⚙️</span>Settings</div>
+                </a>
+            </nav>
+            <a href="points.html">
+                <div class="pts-widget">
+                    <div class="pts-widget-num">840</div>
+                    <div class="pts-widget-label">🪙 Your Points</div>
+                    <div class="pts-widget-bar">
+                        <div class="pts-widget-fill" style="width: 84%"></div>
+                    </div>
+                    <div class="pts-widget-sub">160 pts to Verified Tutor</div>
+                </div>
+            </a>
+            <div class="sidebar-logout" onclick="doLogout()">🚪 Sign Out</div>
+        </aside>
+
+        <!-- ══════════════════════════════════════════
+         MAIN CONTENT
+    ══════════════════════════════════════════ -->
+        <main class="main post-wizard-main">
+
+            <!-- Breadcrumb -->
+            <div class="breadcrumb">
+                <a href="dashboard.html">🏠 Home</a>
+                <span class="breadcrumb-sep">›</span>
+                <span>Ask a Question</span>
+            </div>
+
+            <!-- Page header (hidden on success step) -->
+            <div class="page-header" id="page-header">
+                <h1 class="page-title">✏️ Ask a Question</h1>
+                <p class="page-subtitle">
+                    Posting costs <strong class="cost-deducted">−10 pts</strong>.
+                    A great answer earns you <strong class="cost-earned">+5 to +15 pts</strong> back!
+                </p>
+            </div>
+
+            <!-- Wizard progress bar -->
+            <div class="wizard-wrap" id="wizard-bar">
+                <div class="wizard-steps">
+                    <div class="wz-step active" id="ws1">
+                        <div class="wz-num">1</div>
+                        <span class="wz-label">Search First</span>
+                    </div>
+                    <div class="wz-step" id="ws2">
+                        <div class="wz-num">2</div>
+                        <span class="wz-label">Write Question</span>
+                    </div>
+                    <div class="wz-step" id="ws3">
+                        <div class="wz-num">3</div>
+                        <span class="wz-label">Preview &amp; Post</span>
+                    </div>
+                </div>
+                <div class="wizard-progress">
+                    <div class="wizard-progress-fill" id="wz-progress"></div>
+                </div>
+            </div>
+
+            <!-- ════════════════════════════════════
+           STEP 1 — SEARCH FIRST
+           Check for duplicate questions before posting
+      ════════════════════════════════════ -->
+            <div class="fade-in" id="wz1">
+
+                <!-- Search prompt card -->
+                <div class="card search-card">
+                    <div class="search-card-header">
+                        <div class="search-icon-box">🔍</div>
+                        <div>
+                            <div class="search-prompt-title">Check if your question already exists</div>
+                            <div class="search-prompt-desc">
+                                Search first — you might find an instant answer and save your
+                                <strong class="points-highlight">10 pts</strong>.
+                                Most questions have already been answered!
+                            </div>
+                        </div>
+                    </div>
+                    <div class="search-input-row">
+                        <input autocomplete="off" class="form-input search-field" id="s1-search"
+                               oninput="step1Search(this.value)"
+                               placeholder="e.g. AVL tree rotation, trial balance, eigenvalues..." />
+                        <button class="btn btn-ghost btn-sm"
+                                onclick="step1Search(document.getElementById('s1-search').value)">
+                            🔍 Search
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Similar results panel (shown when matches are found) -->
+                <div class="hidden" id="s1-results">
+                    <div class="search-results-label">
+                        <span>📋 Similar questions found — check these first:</span>
+                    </div>
+                    <div id="s1-results-list"></div>
+                    <div class="search-answer-tip">
+                        <span class="search-tip-icon">💡</span>
+                        <p class="amber-tip-text">
+                            Is your question answered above?
+                            <a class="amber-tip-link" href="single-post.html">Click to view the full answer</a>
+                            and save your 10 pts!
+                        </p>
+                    </div>
+                </div>
+
+                <!-- No results banner (shown when search yields no matches) -->
+                <div class="hidden search-no-results" id="s1-no-results">
+                    <span class="search-no-results-icon">✅</span>
+                    <p class="search-no-results-text">No similar questions found — yours is unique! Go ahead and post it.</p>
+                </div>
+
+                <!-- Step navigation -->
+                <div class="wizard-step-actions">
+                    <a href="dashboard.html"><button class="btn btn-ghost">← Cancel</button></a>
+                    <button class="btn btn-primary btn-lg" onclick="goToStep2()">
+                        My question is different → <span class="btn-cost-label">(−10 pts)</span>
+                    </button>
+                </div>
+
+            </div>
+            <!-- /STEP 1 -->
+            <!-- ════════════════════════════════════
+           STEP 2 — WRITE QUESTION
+           Fill in title, faculty, course, description and tags
+      ════════════════════════════════════ -->
+            <div class="hidden" id="wz2">
+
+                <div class="card">
+
+                    <!-- Question title -->
+                    <div class="form-group">
+                        <label class="form-label">Question Title <span class="form-label-req">*</span></label>
+                        <input class="form-input" id="s2-title" maxlength="150"
+                               oninput="updateTitle(); updateCharCount('s2-title', 'tc-title', 20, 150)"
+                               placeholder="Start with How, Why, What, When, Where..." />
+                        <div class="form-field-footer">
+                            <div class="form-hint">Be specific — good: "How does AVL tree LL rotation work?" · bad: "help with AVL"</div>
+                            <div class="char-counter char-counter-right" id="tc-title">0/150</div>
+                        </div>
+                        <div class="form-error" id="err-title">⚠ Please enter a question title (minimum 10 characters)</div>
+                    </div>
+
+                    <!-- Faculty + Course code (two-column grid) -->
+                    <div class="faculty-course-grid">
+                        <div>
+                            <label class="form-label">Faculty <span class="form-label-req">*</span></label>
+                            <select class="form-input form-select" id="s2-faculty" onchange="updatePreview()">
+                                <option value="">Select your faculty...</option>
+                                <option value="IT Faculty">💻 Information Technology</option>
+                                <option value="Engineering">⚙️ Engineering &amp; Technology</option>
+                                <option value="Business">💼 Business &amp; Finance</option>
+                                <option value="Law">⚖️ Faculty of Law</option>
+                                <option value="Arts">🎨 Arts &amp; Educational Sciences</option>
+                                <option value="Pharmacy">💊 Faculty of Pharmacy</option>
+                                <option value="Administrative">📊 Administrative Sciences</option>
+                            </select>
+                            <div class="form-error" id="err-faculty">⚠ Please select your faculty</div>
+                        </div>
+                        <div>
+                            <label class="form-label">Course Code <span class="form-label-req">*</span></label>
+                            <input class="form-input" id="s2-course" maxlength="10"
+                                   oninput="updatePreview()" placeholder="e.g. CS302, MATH201, ACCT101" />
+                            <div class="form-hint">The course this question is about</div>
+                            <div class="form-error" id="err-course">⚠ Please enter the course code</div>
+                        </div>
+                    </div>
+
+                    <!-- Question description -->
+                    <div class="form-group">
+                        <label class="form-label">Describe Your Question <span class="form-label-req">*</span></label>
+                        <textarea class="form-input form-textarea" id="s2-body" maxlength="2000"
+                                  oninput="updateBody(); updateCharCount('s2-body', 'tc-body', 50, 2000)"
+                                  placeholder="Explain your question clearly:
+                        • What exactly are you trying to understand?
+                        • What have you already tried?
+                        • Where exactly are you stuck?
+                        • Add code examples or formulas if relevant"></textarea>
+                        <div class="form-field-footer">
+                            <div class="form-hint">Minimum 50 characters — more detail gets faster, better answers</div>
+                            <div class="char-counter char-counter-right" id="tc-body">0/2000</div>
+                        </div>
+                        <div class="form-error" id="err-body">⚠ Please describe your question (minimum 50 characters)</div>
+                    </div>
+
+                    <!-- Tags (optional, last form field — no bottom margin) -->
+                    <div class="form-group tags-form-group">
+                        <label class="form-label">
+                            Tags <span class="form-label-note">(optional, max 5)</span>
+                        </label>
+                        <div class="tags-wrap" id="tags-wrap"
+                             onclick="document.getElementById('tags-input').focus()">
+                            <input class="tags-input" id="tags-input" maxlength="20"
+                                   onkeydown="handleTagInput(event)"
+                                   placeholder="Type a tag and press Enter..." type="text" />
+                        </div>
+                        <div class="form-hint">Press Enter or comma to add a tag. Examples: AVL, binary-tree, data-structures</div>
+                    </div>
+
+                </div>
+
+                <!-- Step navigation -->
+                <div class="wizard-step-actions">
+                    <button class="btn btn-ghost" onclick="goToStep1()">← Back</button>
+                    <button class="btn btn-primary btn-lg" id="btn-preview" onclick="goToStep3()">Preview Question →</button>
+                </div>
+
+            </div>
+            <!-- /STEP 2 -->
+            <!-- ════════════════════════════════════
+           STEP 3 — PREVIEW & POST
+           Review the question preview and confirm the checklist before posting
+      ════════════════════════════════════ -->
+            <div class="hidden" id="wz3">
+
+                <!-- Points deduction warning -->
+                <div class="posting-cost-banner">
+                    <span class="posting-cost-icon">🪙</span>
+                    <div>
+                        <div class="posting-cost-title">This will cost 10 points</div>
+                        <div class="amber-tip-text">
+                            Your balance after posting: <strong>830 pts</strong>.
+                            You can earn them back when someone answers —
+                            Best Answer earns you <strong>+15 pts</strong>!
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Live preview label -->
+                <div class="preview-section-label">👁 Preview — this is how your question will look:</div>
+
+                <!-- Live preview of the question card -->
+                <div class="card preview-post-card">
+                    <div class="preview-post-meta">
+                        <div class="av av-sm"><img alt="Ahmad" src="https://i.pravatar.cc/36?img=11" /></div>
+                        <span class="preview-author-name">Ahmad K.</span>
+                        <span class="preview-post-time">· Just now</span>
+                        <span class="chip chip-indigo preview-faculty-badge" id="prev-faculty-chip"></span>
+                        <span class="chip chip-gray" id="prev-course-chip"></span>
+                    </div>
+                    <div class="preview-post-title" id="prev-title">Your question title will appear here...</div>
+                    <div class="preview-post-body" id="prev-body">Your question description will appear here...</div>
+                    <div class="preview-post-tags" id="prev-tags"></div>
+                    <div class="preview-post-stats">
+                        <span>👍 0</span>
+                        <span>💬 0 answers</span>
+                        <span>👁 0 views</span>
+                        <span class="chip chip-gray preview-status-chip">Open</span>
+                    </div>
+                </div>
+
+                <!-- Pre-post checklist -->
+                <div class="card checklist-card">
+                    <div class="checklist-heading">✅ Before you post — quick checklist:</div>
+                    <div class="checklist-items">
+                        <label class="checklist-item">
+                            <input class="checklist-checkbox" id="chk1" type="checkbox" />
+                            My question title is clear and specific
+                        </label>
+                        <label class="checklist-item">
+                            <input class="checklist-checkbox" id="chk2" type="checkbox" />
+                            I described what I already tried and where I'm stuck
+                        </label>
+                        <label class="checklist-item">
+                            <input class="checklist-checkbox" id="chk3" type="checkbox" />
+                            The faculty and course code are correct
+                        </label>
+                        <label class="checklist-item">
+                            <input class="checklist-checkbox" id="chk4" type="checkbox" />
+                            I searched first and this question doesn't already exist
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Step navigation -->
+                <div class="wizard-step-actions">
+                    <button class="btn btn-ghost" onclick="goToStep2()">← Edit Question</button>
+                    <button class="btn btn-primary btn-lg" id="btn-post" onclick="postQuestion()">
+                        🚀 Post Question <span class="btn-cost-label">(−10 pts)</span>
+                    </button>
+                </div>
+
+            </div>
+            <!-- /STEP 3 -->
+            <!-- ════════════════════════════════════
+           STEP 4 — SUCCESS
+           Confirmation screen shown after the question is posted
+      ════════════════════════════════════ -->
+            <div class="hidden fade-in" id="wz4">
+
+                <div class="card success-card-body">
+
+                    <!-- Animated success icon -->
+                    <div class="success-icon-circle">🎉</div>
+                    <h2 class="success-heading">Question posted!</h2>
+                    <p class="success-description">Your question is now live. The community will start answering soon.</p>
+                    <p class="success-points-summary">
+                        You were charged <strong class="cost-deducted">−10 pts</strong>.
+                        Your new balance: <strong class="points-highlight">830 pts</strong>
+                    </p>
+
+                    <!-- How to earn points back -->
+                    <div class="earn-back-panel">
+                        <div class="earn-back-heading">💰 How to earn your points back:</div>
+                        <div class="earn-ways-list">
+                            <span>👍 Every upvote on any of your answers = <strong>+10 pts</strong></span>
+                            <span>✅ If your answer is marked Best Answer = <strong>+15 pts</strong></span>
+                            <span>🎓 Accept a tutoring session = <strong>+20 pts</strong></span>
+                        </div>
+                    </div>
+
+                    <!-- Action buttons -->
+                    <div class="success-action-buttons">
+                        <a href="single-post.html"><button class="btn btn-primary btn-lg">View My Question →</button></a>
+                        <a href="dashboard.html"><button class="btn btn-ghost">Back to Home Feed</button></a>
+                    </div>
+
+                </div>
+
+            </div>
+            <!-- /STEP 4 -->
+
+        </main>
+    </div>
+
+    <!-- ══════════════════════════════════════════
+       JAVASCRIPT — All wizard logic
+  ══════════════════════════════════════════ -->
+    <script>
+            // ── State ──
+            const state = { title: '', faculty: '', course: '', body: '', tags: [] };
+
+            // ── Sidebar toggle ──
+            function initSidebar() {
+              const h = document.getElementById('hamburger');
+              const s = document.getElementById('sidebar');
+              const o = document.getElementById('sidebar-overlay');
+              if (!h || !s) return;
+              h.addEventListener('click', () => {
+                const open = s.classList.toggle('open');
+                h.classList.toggle('open', open);
+                if (o) o.classList.toggle('open', open);
+                document.body.style.overflow = open ? 'hidden' : '';
+              });
+              if (o) o.addEventListener('click', closeSidebar);
+              document.addEventListener('keydown', e => { if (e.key === 'Escape') closeSidebar(); });
+            }
+
+            function closeSidebar() {
+              const s = document.getElementById('sidebar');
+              const o = document.getElementById('sidebar-overlay');
+              const h = document.getElementById('hamburger');
+              if (s) s.classList.remove('open');
+              if (o) o.classList.remove('open');
+              if (h) h.classList.remove('open');
+              document.body.style.overflow = '';
+            }
+
+            // ── User dropdown ──
+            function toggleUserMenu() {
+              document.getElementById('user-dropdown')?.classList.toggle('open');
+            }
+            document.addEventListener('click', e => {
+              const d = document.getElementById('user-dropdown');
+              if (d && !e.target.closest('.nav-user-menu')) d.classList.remove('open');
+            });
+
+            // ── Logout ──
+            function doLogout() {
+              if (confirm('Sign out of UniConnect?')) window.location.href = 'login.html';
+            }
+
+            // ── Toast ──
+            function showToast(msg, type = '') {
+              document.querySelector('.toast')?.remove();
+              const el = document.createElement('div');
+              el.className = 'toast' + (type ? ' toast-' + type : '');
+              el.innerHTML = msg;
+              document.body.appendChild(el);
+              setTimeout(() => {
+                el.style.opacity = '0';
+                el.style.transition = 'opacity .4s';
+                setTimeout(() => el.remove(), 400);
+              }, 3500);
+            }
+
+            // ── Character counter ──
+            function updateCharCount(inputId, counterId, min, max) {
+              const inp = document.getElementById(inputId);
+              const cnt = document.getElementById(counterId);
+              if (!inp || !cnt) return;
+              const len = inp.value.length;
+              cnt.textContent = len + '/' + max;
+              cnt.className = 'char-counter char-counter-right';
+              if (len === 0) return;
+              if (len < min)         cnt.classList.add('char-err');
+              else if (len > max * 0.85) cnt.classList.add('char-warn');
+              else                   cnt.classList.add('char-ok');
+            }
+
+            // ── Wizard progress bar ──
+            function setProgress(step) {
+              const pct = { 1: 16, 2: 50, 3: 83, 4: 100 }[step] || 16;
+              document.getElementById('wz-progress').style.width = pct + '%';
+            }
+
+            // ── Step switcher ──
+            function switchToStep(n) {
+              // Hide all step panels
+              [1, 2, 3, 4].forEach(i => {
+                document.getElementById('wz' + i)?.classList.add('hidden');
+              });
+              // Update wizard bar indicators (steps 1-3 only)
+              [1, 2, 3].forEach(i => {
+                const dot = document.getElementById('ws' + i);
+                if (!dot) return;
+                dot.classList.remove('active', 'done');
+                if (i === n) dot.classList.add('active');
+                if (i < n)  dot.classList.add('done');
+              });
+              // Show target panel
+              const target = document.getElementById('wz' + n);
+              if (target) {
+                target.classList.remove('hidden');
+                target.classList.add('fade-in');
+              }
+              // Hide wizard bar and page header on success step
+              const isSuccess = n === 4;
+              document.getElementById('wizard-bar').style.display  = isSuccess ? 'none' : '';
+              document.getElementById('page-header').style.display = isSuccess ? 'none' : '';
+
+              setProgress(n);
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+
+            // ── STEP 1 — Sample questions for duplicate search ──
+            const SAMPLE_QUESTIONS = [
+              { title: 'How does AVL tree rotation actually work?',         course: 'CS302',   faculty: 'IT',          solved: true,  answers: 7, votes: 42 },
+              { title: 'What is the time complexity of AVL tree operations?', course: 'CS302', faculty: 'IT',          solved: true,  answers: 4, votes: 18 },
+              { title: 'Difference between Dijkstra and Bellman-Ford?',    course: 'CS401',   faculty: 'IT',          solved: false, answers: 4, votes: 18 },
+              { title: 'How to prepare a trial balance from journal entries?', course: 'ACCT201', faculty: 'Business', solved: true,  answers: 3, votes: 9  },
+              { title: 'Finding eigenvalues of a 3×3 matrix step by step?', course: 'MATH201', faculty: 'Engineering', solved: false, answers: 5, votes: 14 },
+              { title: 'Mechanism of action of beta-blockers explained?',   course: 'PHARM301', faculty: 'Pharmacy',  solved: false, answers: 6, votes: 21 },
+              { title: 'How to implement a stack using two queues?',        course: 'CS302',   faculty: 'IT',          solved: true,  answers: 4, votes: 7  },
+              { title: 'Best approach for memoization in dynamic programming?', course: 'CS401', faculty: 'IT',        solved: false, answers: 3, votes: 9  },
+            ];
+
+            function step1Search(q) {
+              const resultsPanel = document.getElementById('s1-results');
+              const noResults    = document.getElementById('s1-no-results');
+              const list         = document.getElementById('s1-results-list');
+              q = q.trim().toLowerCase();
+
+              if (q.length < 3) {
+                resultsPanel.classList.add('hidden');
+                noResults.classList.add('hidden');
+                return;
+              }
+
+              const matches = SAMPLE_QUESTIONS.filter(x =>
+                x.title.toLowerCase().includes(q) ||
+                x.course.toLowerCase().includes(q) ||
+                x.faculty.toLowerCase().includes(q)
+              );
+
+              if (matches.length) {
+                list.innerHTML = '';
+                matches.slice(0, 3).forEach(m => {
+                  const el = document.createElement('a');
+                  el.href = 'single-post.html';
+                  el.style.cssText = 'display:block;background:#fff;border:1.5px solid var(--border);border-radius:12px;padding:14px 18px;margin-bottom:10px;transition:all .2s;cursor:pointer;text-decoration:none;color:inherit';
+                  el.onmouseover = () => { el.style.borderColor = 'var(--indigo)'; el.style.boxShadow = '0 4px 16px rgba(61,82,160,.12)'; el.style.transform = 'translateY(-1px)'; };
+                  el.onmouseout  = () => { el.style.borderColor = 'var(--border)'; el.style.boxShadow = 'none'; el.style.transform = 'none'; };
+                  el.innerHTML = `
+                    <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:8px">
+                      <span style="display:inline-flex;align-items:center;padding:3px 10px;border-radius:99px;font-size:11px;font-weight:700;background:${m.solved ? 'var(--emerald-light)' : '#EEF2FF'};color:${m.solved ? '#065F46' : 'var(--indigo)'}">${m.solved ? '✅ Solved' : '❓ Open'}</span>
+                      <span style="display:inline-flex;align-items:center;padding:3px 10px;border-radius:99px;font-size:11px;font-weight:700;background:var(--violet-light);color:#5B21B6">${m.course}</span>
+                      <span style="font-size:11px;color:var(--text-3);margin-left:auto">${m.answers} answers · ${m.votes} votes</span>
+                    </div>
+                    <div style="font-size:14px;font-weight:700;color:var(--indigo)">${escapeHtml(m.title)}</div>`;
+                  list.appendChild(el);
+                });
+                resultsPanel.classList.remove('hidden');
+                noResults.classList.add('hidden');
+              } else {
+                resultsPanel.classList.add('hidden');
+                noResults.classList.remove('hidden');
+              }
+            }
+
+            function goToStep1() { switchToStep(1); }
+            function goToStep2() { switchToStep(2); }
+
+            // ── STEP 2 — Live preview update ──
+            function updateTitle() {
+              state.title = document.getElementById('s2-title').value;
+              updatePreview();
+            }
+
+            function updateBody() {
+              state.body = document.getElementById('s2-body').value;
+              updatePreview();
+            }
+
+            function updatePreview() {
+              state.faculty = document.getElementById('s2-faculty').value;
+              state.course  = document.getElementById('s2-course').value;
+              const fChip    = document.getElementById('prev-faculty-chip');
+              const cChip    = document.getElementById('prev-course-chip');
+              const prevTitle = document.getElementById('prev-title');
+              const prevBody  = document.getElementById('prev-body');
+              if (fChip)     fChip.textContent    = state.faculty || 'Faculty';
+              if (cChip)     cChip.textContent    = state.course  || 'Course';
+              if (prevTitle) prevTitle.textContent = state.title  || 'Your question title will appear here...';
+              if (prevBody)  prevBody.textContent  = state.body   || 'Your question description will appear here...';
+              updateTagPreview();
+            }
+
+            // ── Tags ──
+            const tags = [];
+
+            function handleTagInput(e) {
+              const inp = document.getElementById('tags-input');
+              if (e.key === 'Enter' || e.key === ',') {
+                e.preventDefault();
+                addTag(inp.value.replace(',', '').trim());
+                inp.value = '';
+              }
+              if (e.key === 'Backspace' && inp.value === '' && tags.length) {
+                removeTag(tags.length - 1);
+              }
+            }
+
+            function addTag(val) {
+              if (!val || tags.length >= 5 || tags.includes(val)) return;
+              tags.push(val);
+              renderTags();
+              updateTagPreview();
+            }
+
+            function removeTag(i) {
+              tags.splice(i, 1);
+              renderTags();
+              updateTagPreview();
+            }
+
+            function renderTags() {
+              const wrap = document.getElementById('tags-wrap');
+              const inp  = document.getElementById('tags-input');
+              wrap.querySelectorAll('.tag-chip').forEach(t => t.remove());
+              tags.forEach((t, i) => {
+                const chip = document.createElement('div');
+                chip.className = 'tag-chip';
+                chip.innerHTML = `${escapeHtml(t)}<button type="button" onclick="removeTag(${i})">×</button>`;
+                wrap.insertBefore(chip, inp);
+              });
+            }
+
+            function updateTagPreview() {
+              const container = document.getElementById('prev-tags');
+              if (!container) return;
+              container.innerHTML = '';
+              tags.forEach(t => {
+                const chip = document.createElement('span');
+                chip.className = 'chip chip-gray';
+                chip.style.fontSize = '12px';
+                chip.textContent = t;
+                container.appendChild(chip);
+              });
+            }
+
+            // ── Step 2 validation ──
+            function validateStep2() {
+              let ok = true;
+              const title   = document.getElementById('s2-title').value.trim();
+              const faculty = document.getElementById('s2-faculty').value;
+              const course  = document.getElementById('s2-course').value.trim();
+              const body    = document.getElementById('s2-body').value.trim();
+
+              function check(inputId, errId, value, minLen) {
+                const inp = document.getElementById(inputId);
+                const err = document.getElementById(errId);
+                if (value.length < minLen) {
+                  inp.classList.add('error');
+                  err.style.display = 'block';
+                  ok = false;
+                } else {
+                  inp.classList.remove('error');
+                  inp.classList.add('success');
+                  err.style.display = 'none';
+                }
+              }
+              check('s2-title',   'err-title',   title,   10);
+              check('s2-faculty', 'err-faculty', faculty,  1);
+              check('s2-course',  'err-course',  course,   2);
+              check('s2-body',    'err-body',    body,    50);
+              return ok;
+            }
+
+            function goToStep3() {
+              if (!validateStep2()) {
+                showToast('⚠️ Please fix the errors above');
+                document.querySelector('.form-input.error')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                return;
+              }
+              state.title   = document.getElementById('s2-title').value.trim();
+              state.faculty = document.getElementById('s2-faculty').value;
+              state.course  = document.getElementById('s2-course').value.trim();
+              state.body    = document.getElementById('s2-body').value.trim();
+              updatePreview();
+              switchToStep(3);
+            }
+
+            // ── Post question ──
+            function postQuestion() {
+              const unchecked = ['chk1', 'chk2', 'chk3', 'chk4'].filter(id => !document.getElementById(id).checked);
+              if (unchecked.length) {
+                showToast('⚠️ Please check all boxes before posting');
+                return;
+              }
+              const btn = document.getElementById('btn-post');
+              btn.disabled = true;
+              btn.textContent = 'Posting...';
+              setTimeout(() => switchToStep(4), 800);
+            }
+
+            // ── Utility ──
+            function escapeHtml(str) {
+              return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+            }
+
+            // ── Init ──
+            document.addEventListener('DOMContentLoaded', () => {
+              initSidebar();
+              setProgress(1);
+
+              // Nav search suggestions
+              const navSearch = document.querySelector('.nav-search .form-input');
+              if (navSearch) {
+                const wrap = navSearch.closest('.nav-search');
+                wrap.style.position = 'relative';
+                const dd = document.createElement('div');
+                dd.style.cssText = 'position:absolute;top:calc(100% + 6px);left:0;right:0;background:#fff;border:1px solid var(--border);border-radius:12px;box-shadow:0 12px 40px rgba(61,82,160,.16);z-index:999;max-height:300px;overflow-y:auto;display:none';
+                dd.id = 'nav-search-dd';
+                wrap.appendChild(dd);
+                navSearch.addEventListener('input', () => {
+                  const q = navSearch.value.trim().toLowerCase();
+                  if (q.length < 2) { dd.style.display = 'none'; return; }
+                  const res = SAMPLE_QUESTIONS.filter(x => x.title.toLowerCase().includes(q) || x.course.toLowerCase().includes(q));
+                  dd.innerHTML = '';
+                  if (!res.length) {
+                    dd.innerHTML = '<div style="padding:18px;text-align:center;font-size:13px;color:var(--text-2)">No results found</div>';
+                  } else {
+                    res.slice(0, 5).forEach(r => {
+                      const el = document.createElement('a');
+                      el.href = 'single-post.html';
+                      el.style.cssText = 'display:flex;gap:10px;align-items:flex-start;padding:12px 16px;cursor:pointer;border-bottom:1px solid var(--border);transition:background .15s;text-decoration:none;color:inherit';
+                      el.onmouseover = () => el.style.background = 'var(--indigo-light)';
+                      el.onmouseout  = () => el.style.background = 'transparent';
+                      el.innerHTML   = `<span style="font-size:18px;flex-shrink:0">${r.solved ? '✅' : '❓'}</span><div><div style="font-size:13px;font-weight:700">${escapeHtml(r.title)}</div><div style="font-size:11px;color:var(--text-2)">${r.faculty} · ${r.course} · ${r.answers} answers</div></div>`;
+                      dd.appendChild(el);
+                    });
+                  }
+                  dd.style.display = 'block';
+                });
+                document.addEventListener('click', e => { if (!wrap.contains(e.target)) dd.style.display = 'none'; });
+              }
+            });
+    </script>
+
+</body>
+</html>

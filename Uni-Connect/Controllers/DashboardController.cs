@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Uni_Connect.Models;
 
 namespace Uni_Connect.Controllers
 {
@@ -11,14 +12,19 @@ namespace Uni_Connect.Controllers
         public IActionResult Profile()
         {
             return View();
-        }public IActionResult Notifications()
+        } public IActionResult Notifications()
         {
             return View();
-        } 
+        }
         public IActionResult Leaderboard()
         {
             return View();
         }
-        
+        public IActionResult CreatePost()
+        {
+            return View(); 
+        }
+
+
     }
 }
