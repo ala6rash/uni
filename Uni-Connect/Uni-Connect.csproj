@@ -8,14 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="wwwroot\css\create-post-step1.css" />
-    <None Include="wwwroot\css\create-post-step2.css" />
-    <None Include="wwwroot\css\create-post-step3.css" />
-    <None Include="wwwroot\css\create-post-step4.css" />
-    <None Include="wwwroot\css\create-post.css" />
-  </ItemGroup>
-
-  <ItemGroup>
+    <PackageReference Include="BCrypt.Net-Next" Version="4.1.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.14" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.14" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.14">
