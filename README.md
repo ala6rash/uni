@@ -1,42 +1,44 @@
-# Uni-Connect
+# UniConnect
 
-## What we need to work on
+A university social-learning web application built with **ASP.NET Core MVC** (net8.0).
 
-### Home / Login
-0. Fixing the shared layout (nav-bar, side-bar, footer)  
-1. Login authentication  
-2. Registration  
-3. Forgot password authentication  
+## Project structure
 
-### Dashboard
-4. User state must be working  
-5. Like, comment, view must be working  
-6. Request session  
-7. Trending topics and adding topics  
-8. Search bar  
-9. Sign-out  
-10. Search banner fix  
-11. Displaying the questions  
-12. Interacting with posts  
-13. Trending tab in the dashboard page  
-14. Faculty-specific questions  
+The repository contains a single application:
 
-### Profile
-15. Everything in the profile page  
+```
+UniConnect.Web/   ← ASP.NET Core MVC app (net8.0)
+```
 
-### Leaderboard
-16. Faculty filtering  
-17. Time filtering  
-18. Rank calculations (top and bottom boards)  
+## Requirements
 
-### Notifications
-19. Notification system for the website  
+- [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8)
+- SQL Server (or SQL Server Express / LocalDB on Windows)
 
-### Other (Not done yet)
-20. Ask question, sessions, points & rewards, settings, admin dashboard  
+## Setup & run
 
----
+1. **Configure the connection string**
 
-## ⚠️ Important
-**Please, if you want to take a task, tell me first.  
-When you finish it, remove it from this list.**
+   Open `UniConnect.Web/appsettings.json` and update the `DefaultConnection` value to point to your SQL Server instance:
+
+   ```json
+   "ConnectionStrings": {
+     "DefaultConnection": "Server=(localdb)\\mssqllocaldb;Database=UniConnectDb;Trusted_Connection=True;"
+   }
+   ```
+
+2. **Apply database migrations**
+
+   ```bash
+   cd UniConnect.Web
+   dotnet ef database update
+   ```
+
+3. **Run the application**
+
+   ```bash
+   cd UniConnect.Web
+   dotnet run
+   ```
+
+   The app will be available at `https://localhost:5001` (or the port shown in the console).
