@@ -21,10 +21,21 @@ namespace Uni_Connect.Controllers
             int userId = int.Parse(userIdStr);
             var user = await _context.Users
                 .Include(u => u.Notifications)
+                .Include(u => u.Posts)
                 .FirstOrDefaultAsync(u => u.UserID == userId);
 
             if (user == null) return RedirectToAction("Login_Page", "Login");
 
+            // Fetch all posts with related data
+            var posts = await _context.Posts
+                .Where(p => !p.IsDeleted)
+                .Include(p => p.User)
+                .Include(p => p.Category)
+                .Include(p => p.Answers)
+                .OrderByDescending(p => p.CreatedAt)
+                .ToListAsync();
+
+            ViewBag.Posts = posts;
             return View(user);
         }
         public async Task<IActionResult> Profile()
