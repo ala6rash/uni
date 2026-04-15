@@ -5,10 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - UniConnect</title>
     
-    <!-- FONTS -->
+    <!-- FONTS & ICONS -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet" />
     
     <!-- CSS -->
     <link href="~/css/site.css" rel="stylesheet" />
@@ -39,7 +40,7 @@
     <!-- NAV -->
     <nav class="nav">
         <a asp-controller="Home" asp-action="Index" class="nav-logo" style="text-decoration:none; color:inherit; display:flex; align-items:center; gap:10px; font-weight:900; font-size:20px;">
-            <div class="nav-logo-icon">🎓</div>
+            <div class="nav-logo-icon"><i class="fas fa-graduation-cap"></i></div>
             UniConnect
         </a>
         <div class="nav-links">
@@ -57,7 +58,7 @@
             else
             {
                 <a asp-controller="Login" asp-action="Login_Page"><button class="btn btn-ghost btn-sm">Sign In</button></a>
-                <a asp-controller="Login" asp-action="Register_Page"><button class="btn btn-primary btn-sm">Join Free 🚀</button></a>
+                <a asp-controller="Login" asp-action="Register_Page"><button class="btn btn-primary btn-sm">Join Free <i class="fas fa-rocket" style="margin-left:6px"></i></button></a>
             }
         </div>
     </nav>

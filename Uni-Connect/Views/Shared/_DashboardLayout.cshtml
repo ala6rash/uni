@@ -7,6 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet" />
     <link href="~/css/design-system.css" rel="stylesheet" />
     @await RenderSectionAsync("Styles", required: false)
 </head>
@@ -17,17 +18,18 @@
             <button class="nav-hamburger" id="sidebarToggle" style="display:none; border:none; background:none; cursor:pointer; font-size:20px;">☰</button>
             <a asp-controller="Home" asp-action="Index" style="text-decoration:none;">
                 <div class="nav-logo">
-                    <div class="nav-logo-icon">🎓</div>
+                    <div class="nav-logo-icon"><i class="fas fa-graduation-cap"></i></div>
                     <span>UniConnect</span>
                 </div>
             </a>
             <div class="nav-search">
-                <input type="text" class="form-input" placeholder="🔍 Search questions..." />
+                <input type="text" class="form-input" placeholder="Search questions..." />
+                <i class="fas fa-magnifying-glass" style="position:absolute; right:12px; top:50%; transform:translateY(-50%); color:var(--text-2); pointer-events:none;"></i>
             </div>
         </div>
         <div class="nav-actions">
             <div class="nav-bell" id="notifBell">
-                🔔
+                <i class="fas fa-bell"></i>
                 <span class="nav-bell-badge" id="notifBadge">3</span>
             </div>
             <div style="position: relative;">
@@ -35,10 +37,10 @@
                     <div class="av av-sm"><img src="https://via.placeholder.com/44" alt="User"/></div>
                 </button>
                 <div class="nav-user-dropdown" id="navUserDropdown">
-                    <a href="#" class="nav-dropdown-item" style="text-decoration:none;">👤 My Profile</a>
-                    <a href="#" class="nav-dropdown-item" style="text-decoration:none;">⚙️ Settings</a>
+                    <a href="#" class="nav-dropdown-item" style="text-decoration:none;"><i class="fas fa-user"></i> My Profile</a>
+                    <a href="#" class="nav-dropdown-item" style="text-decoration:none;"><i class="fas fa-cog"></i> Settings</a>
                     <hr style="margin:0; border:none; border-top:1px solid #E2E8F0;">
-                    <a asp-controller="Login" asp-action="Logout" class="nav-dropdown-item logout" style="text-decoration:none;">🚪 Sign Out</a>
+                    <a asp-controller="Login" asp-action="Logout" class="nav-dropdown-item logout" style="text-decoration:none;"><i class="fas fa-door-open"></i> Sign Out</a>
                 </div>
             </div>
         </div>
@@ -50,19 +52,19 @@
             <div class="av av-md"><img src="https://via.placeholder.com/60" alt="User"/></div>
             <div>
                 <div class="sidebar-user-name">@(User.FindFirst("FullName")?.Value ?? "Student")</div>
-                <div class="sidebar-user-pts">🪙 1,250 points</div>
+                <div class="sidebar-user-pts"><i class="fas fa-coins"></i> 1,250 points</div>
             </div>
         </a>
 
         <nav class="sidebar-nav">
-            <a asp-controller="Dashboard" asp-action="Dashboard" class="nav-item active">🏠 Home Feed</a>
-            <a asp-controller="Dashboard" asp-action="CreatePost" class="nav-item">✏️ Ask Question</a>
-            <a asp-controller="Dashboard" asp-action="ChatPage" class="nav-item">💬 Private Sessions <span class="nav-badge">2</span></a>
-            <a asp-controller="Dashboard" asp-action="Leaderboard" class="nav-item">🏆 Leaderboard</a>
-            <a href="#notifications" class="nav-item">🔔 Notifications <span class="nav-badge">3</span></a>
-            <a href="#profile" class="nav-item">👤 My Profile</a>
-            <a href="#rewards" class="nav-item">🪙 Points & Rewards</a>
-            <a href="#settings" class="nav-item">⚙️ Settings</a>
+            <a asp-controller="Dashboard" asp-action="Dashboard" class="nav-item active"><i class="fas fa-house"></i> Home Feed</a>
+            <a asp-controller="Dashboard" asp-action="CreatePost" class="nav-item"><i class="fas fa-pen"></i> Ask Question</a>
+            <a asp-controller="Dashboard" asp-action="ChatPage" class="nav-item"><i class="fas fa-comments"></i> Private Sessions <span class="nav-badge">2</span></a>
+            <a asp-controller="Dashboard" asp-action="Leaderboard" class="nav-item"><i class="fas fa-trophy"></i> Leaderboard</a>
+            <a href="#notifications" class="nav-item"><i class="fas fa-bell"></i> Notifications <span class="nav-badge">3</span></a>
+            <a href="#profile" class="nav-item"><i class="fas fa-user"></i> My Profile</a>
+            <a href="#rewards" class="nav-item"><i class="fas fa-coins"></i> Points & Rewards</a>
+            <a href="#settings" class="nav-item"><i class="fas fa-cog"></i> Settings</a>
         </nav>
 
         <div class="pts-widget">
