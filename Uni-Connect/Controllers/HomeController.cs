@@ -15,10 +15,6 @@ namespace Uni_Connect.Controllers
 
         public IActionResult Index()
         {
-            if (User.Identity.IsAuthenticated)
-            {
-                return RedirectToAction("Dashboard", "Dashboard");
-            }
             return View();
         }
        
