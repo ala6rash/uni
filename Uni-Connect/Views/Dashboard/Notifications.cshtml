@@ -33,7 +33,19 @@
                                 }
                             </div>
                             <div class="notification-content">
-                                <div class="notification-title">@notif.Message</div>
+                                <div class="notification-title">
+                                    @{
+                                        string message = notif.Type switch
+                                        {
+                                            "Answer" => "Someone answered your question",
+                                            "Upvote" => "Someone upvoted your post",
+                                            "BestAnswer" => "Your answer was marked as best!",
+                                            "SessionAccepted" => "A tutoring session was accepted",
+                                            _ => $"Notification: {notif.Type}"
+                                        };
+                                    }
+                                    @message
+                                </div>
                                 <div class="notification-time">@notif.CreatedAt.ToString("MMMM d · h:mm tt")</div>
                             </div>
                         </div>
