@@ -3,10 +3,12 @@ using Uni_Connect.Models;
 using Uni_Connect.ViewModels;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Uni_Connect.Controllers
 {
 
+    [Authorize]
     public class DashboardController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -75,12 +77,99 @@ namespace Uni_Connect.Controllers
             ViewBag.Leaderboard = leaderboardUsers;
             return View(user);
         }
-        public async Task<IActionResult> CreatePost()
+
+        public async Task<IActionResult> Points()
         {
             var user = await GetCurrentUser();
             if (user == null) return RedirectToAction("Login_Page", "Login");
-            return View(new ViewModels.CreatePostViewModel());
+
+            // Calculate level (every 500 points = 1 level, max 10)
+            int level = Math.Min(user.Points / 500 + 1, 10);
+            int pointsForCurrentLevel = (level - 1) * 500;
+            int pointsForNextLevel = level * 500;
+            int progressToNextLevel = Math.Max(0, user.Points - pointsForCurrentLevel);
+            int pointsNeededForNext = Math.Max(0, pointsForNextLevel - user.Points);
+            int progressPercentage = (int)((progressToNextLevel / (float)(pointsForNextLevel - pointsForCurrentLevel)) * 100);
+
+            // Get user's posts and answers count
+            var userPosts = await _context.Posts
+                .Where(p => p.UserID == user.UserID && !p.IsDeleted)
+                .CountAsync();
+
+            var userAnswers = await _context.Answers
+                .Where(a => a.UserID == user.UserID && !a.IsDeleted)
+                .CountAsync();
+
+            // Build achievements list
+            var achievements = new List<ViewModels.Achievement>
+            {
+                new ViewModels.Achievement
+                {
+                    Title = "First Steps",
+                    Description = "Score 100 points",
+                    Icon = "🎯",
+                    Unlocked = user.Points >= 100,
+                    UnlockedDate = user.Points >= 100 ? DateTime.Now : null
+                },
+                new ViewModels.Achievement
+                {
+                    Title = "Helper",
+                    Description = "Give 5 answers",
+                    Icon = "🤝",
+                    Unlocked = userAnswers >= 5,
+                    UnlockedDate = userAnswers >= 5 ? DateTime.Now : null
+                },
+                new ViewModels.Achievement
+                {
+                    Title = "Questioner",
+                    Description = "Ask 3 questions",
+                    Icon = "❓",
+                    Unlocked = userPosts >= 3,
+                    UnlockedDate = userPosts >= 3 ? DateTime.Now : null
+                },
+                new ViewModels.Achievement
+                {
+                    Title = "Rising Star",
+                    Description = "Reach level 5",
+                    Icon = "⭐",
+                    Unlocked = level >= 5,
+                    UnlockedDate = level >= 5 ? DateTime.Now : null
+                },
+                new ViewModels.Achievement
+                {
+                    Title = "Expert",
+                    Description = "Reach level 10",
+                    Icon = "🏆",
+                    Unlocked = level >= 10,
+                    UnlockedDate = level >= 10 ? DateTime.Now : null
+                }
+            };
+
+            var model = new ViewModels.PointsViewModel
+            {
+                UserID = user.UserID,
+                Name = user.Name,
+                Faculty = user.Faculty,
+                YearOfStudy = user.YearOfStudy,
+                CurrentPoints = user.Points,
+                CurrentLevel = level,
+                NextLevelPoints = pointsNeededForNext,
+                ProgressPercentage = progressPercentage,
+                QuestionsAsked = userPosts,
+                AnswersGiven = userAnswers,
+                HelpfulAnswers = 0, // TODO: Count from Answer model if it has "IsHelpful" field
+                Achievements = achievements
+            };
+
+            return View(model);
         }
+
+        public async Task<IActionResult> CreatePost()
+            {
+                var user = await GetCurrentUser();
+                if (user == null) return RedirectToAction("Login_Page", "Login");
+                return View(new ViewModels.CreatePostViewModel());
+            }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -180,22 +269,23 @@ namespace Uni_Connect.Controllers
             // Save all changes
             await _context.SaveChangesAsync();
 
-            // Redirect to SinglePost page
-            return RedirectToAction("SinglePost", new { id = post.PostID });
+            // Redirect to Dashboard after successful post
+            return RedirectToAction("Dashboard");
         }
 
         public async Task<IActionResult> Sessions()
         {
             var user = await GetCurrentUser();
             if (user == null) return RedirectToAction("Login_Page", "Login");
-            return View(user);
-        }
-
-        public async Task<IActionResult> Points()
-        {
-            var user = await GetCurrentUser();
-            if (user == null) return RedirectToAction("Login_Page", "Login");
-            return View(user);
+            
+            var sessions = await _context.PrivateSessions
+                .Where(s => s.StudentID == user.UserID || s.HelperID == user.UserID)
+                .Include(s => s.Student)
+                .Include(s => s.Helper)
+                .Include(s => s.Messages)
+                .ToListAsync();
+            
+            return View(sessions);
         }
 
         public async Task<IActionResult> ChatPage()
@@ -205,11 +295,20 @@ namespace Uni_Connect.Controllers
             return View(user);
         }
 
-        public async Task<IActionResult> SinglePost()
+        public async Task<IActionResult> SinglePost(int id)
         {
             var user = await GetCurrentUser();
             if (user == null) return RedirectToAction("Login_Page", "Login");
-            return View(user);
+            
+            var post = await _context.Posts
+                .Include(p => p.User)
+                .Include(p => p.Category)
+                .Include(p => p.Answers)
+                .FirstOrDefaultAsync(p => p.PostID == id);
+            
+            if (post == null) return RedirectToAction("Dashboard");
+            
+            return View(post);
         }
 
         private async Task<User> GetCurrentUser()

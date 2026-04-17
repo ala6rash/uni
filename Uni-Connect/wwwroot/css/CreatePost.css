@@ -347,6 +347,112 @@ textarea {
     line-height: 1.7;
 }
 
+/* File upload input */
+.file-upload-wrapper {
+    position: relative;
+    display: inline-block;
+    width: 100%;
+}
+
+.file-upload-input {
+    display: none;
+}
+
+.file-upload-label {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 24px;
+    border: 2px dashed var(--border);
+    border-radius: 12px;
+    background: var(--bg);
+    cursor: pointer;
+    transition: all .2s;
+    text-align: center;
+    flex-direction: column;
+}
+
+    .file-upload-label:hover {
+        border-color: var(--indigo);
+        background: var(--indigo-light);
+        color: var(--indigo);
+    }
+
+.file-upload-label.has-file {
+    border-color: var(--emerald);
+    background: var(--emerald-light);
+    color: var(--emerald);
+}
+
+.file-upload-icon {
+    font-size: 28px;
+    display: block;
+}
+
+.file-upload-text {
+    font-weight: 700;
+    font-size: 14px;
+}
+
+.file-upload-hint {
+    font-size: 12px;
+    opacity: .75;
+    margin-top: 4px;
+}
+
+.file-preview {
+    margin-top: 14px;
+    padding: 12px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.file-preview-img {
+    width: 60px;
+    height: 60px;
+    border-radius: 8px;
+    object-fit: cover;
+    border: 1px solid var(--border);
+}
+
+.file-preview-info {
+    flex: 1;
+}
+
+.file-preview-name {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text);
+}
+
+.file-preview-size {
+    font-size: 12px;
+    color: var(--text-2);
+    margin-top: 2px;
+}
+
+.file-preview-remove {
+    background: var(--rose-light);
+    color: var(--rose);
+    border: none;
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all .2s;
+}
+
+    .file-preview-remove:hover {
+        background: var(--rose);
+        color: #fff;
+    }
+
 /* ══════════════════════════════════════════
    NAVBAR
 ══════════════════════════════════════════ */
@@ -724,7 +830,8 @@ textarea {
 
 /* Constrain the wizard flow to a readable width */
 .post-wizard-main {
-    max-width: 780px;
+    max-width: 820px;
+    margin: 0 auto;
 }
 
 /* ══════════════════════════════════════════
@@ -771,14 +878,81 @@ textarea {
 /* Inline cost highlights shared across all steps */
 .cost-deducted {
     color: var(--rose);
+    font-weight: 800;
 }
 
 .cost-earned {
     color: var(--emerald);
+    font-weight: 800;
 }
 
 .points-highlight {
     color: var(--indigo);
+    font-weight: 800;
+}
+
+/* Points explanation banner */
+.points-explanation-banner {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    margin-bottom: 24px;
+    padding: 14px 18px;
+    background: linear-gradient(135deg, #FEF3C7 0%, #FDEAA8 100%);
+    border: 1.5px solid #FDE68A;
+    border-radius: 12px;
+}
+
+.points-explanation-icon {
+    font-size: 22px;
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+
+.points-explanation-content {
+    flex: 1;
+}
+
+.points-explanation-title {
+    font-size: 13px;
+    font-weight: 800;
+    color: #92400E;
+    margin-bottom: 6px;
+}
+
+.points-explanation-rows {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-size: 13px;
+    color: #92400E;
+    line-height: 1.5;
+}
+
+.points-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.points-row-cost {
+    background: rgba(244, 63, 94, 0.15);
+    color: var(--rose);
+    padding: 2px 8px;
+    border-radius: 6px;
+    font-weight: 700;
+    font-size: 12px;
+    white-space: nowrap;
+}
+
+.points-row-earn {
+    background: rgba(16, 185, 129, 0.15);
+    color: var(--emerald);
+    padding: 2px 8px;
+    border-radius: 6px;
+    font-weight: 700;
+    font-size: 12px;
+    white-space: nowrap;
 }
 
 /* ══════════════════════════════════════════

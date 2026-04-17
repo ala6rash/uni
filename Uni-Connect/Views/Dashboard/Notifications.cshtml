@@ -4,81 +4,94 @@
     Layout = "~/Views/Shared/_DashboardLayout.cshtml";
 }
 
-<div class="page-container">
-    <div class="page-header">
-        <h1 class="page-title"><i class="fas fa-bell"></i> Notifications</h1>
-        <p class="page-subtitle">Stay updated with your activity and discussions</p>
-    </div>
-
-    <div class="notifications-container">
-        @if (Model?.Notifications?.Any() == true)
-        {
-            <div class="card">
-                <div class="notifications-list">
-                    @foreach (var notif in Model.Notifications.OrderByDescending(n => n.CreatedAt))
-                    {
-                        <div class="notification-item">
-                            <div class="notification-icon">
-                                @if (notif.Type == "Answer")
-                                {
-                                    <i class="fas fa-comment-dots" style="color:var(--indigo)"></i>
-                                }
-                                else if (notif.Type == "Upvote")
-                                {
-                                    <i class="fas fa-thumbs-up" style="color:var(--amber)"></i>
-                                }
-                                else
-                                {
-                                    <i class="fas fa-star" style="color:var(--violet)"></i>
-                                }
-                            </div>
-                            <div class="notification-content">
-                                <div class="notification-title">
-                                    @{
-                                        string message = notif.Type switch
-                                        {
-                                            "Answer" => "Someone answered your question",
-                                            "Upvote" => "Someone upvoted your post",
-                                            "BestAnswer" => "Your answer was marked as best!",
-                                            "SessionAccepted" => "A tutoring session was accepted",
-                                            _ => $"Notification: {notif.Type}"
-                                        };
-                                    }
-                                    @message
-                                </div>
-                                <div class="notification-time">@notif.CreatedAt.ToString("MMMM d · h:mm tt")</div>
-                            </div>
-                        </div>
-                    }
-                </div>
-            </div>
-        }
-        else
-        {
-            <div class="card" style="text-align:center;padding:60px 30px">
-                <div style="font-size:48px;margin-bottom:16px"><i class="fas fa-inbox" style="color:var(--text-2)"></i></div>
-                <h3 style="margin-bottom:8px;font-size:18px">No notifications yet</h3>
-                <p style="color:var(--text-2);font-size:14px">When someone answers your question or upvotes, you'll see it here</p>
-            </div>
-        }
-    </div>
-</div>
-
+@section Styles {
 <style>
-    .page-container { max-width: 800px; margin: 0 auto; padding: 24px 20px; }
-    .page-header { margin-bottom: 32px; }
-    .page-title { font-size: 28px; font-weight: 800; color: var(--text); margin-bottom: 8px; }
-    .page-subtitle { font-size: 15px; color: var(--text-2); }
+    .notif-wrapper { max-width: 800px; margin: 0 auto; }
     
-    .notifications-container { display: flex; flex-direction: column; gap: 16px; }
+    .notif-header { margin-bottom: 28px; }
+    .notif-title { font-size: 28px; font-weight: 800; margin-bottom: 4px; }
+    .notif-subtitle { font-size: 14px; color: var(--text-2); }
     
-    .notifications-list { display: flex; flex-direction: column; }
-    .notification-item { display: flex; gap: 16px; padding: 16px 18px; border-bottom: 1px solid var(--border); transition: background .2s; }
-    .notification-item:hover { background: var(--indigo-light); }
-    .notification-item:last-child { border-bottom: none; }
+    .notif-container { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
     
-    .notification-icon { font-size: 20px; flex-shrink: 0; margin-top: 2px; }
-    .notification-content { flex: 1; }
-    .notification-title { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
-    .notification-time { font-size: 12px; color: var(--text-2); }
+    .notif-item {
+        display: flex; gap: 16px; padding: 16px 20px;
+        border-bottom: 1px solid var(--border);
+        transition: background .2s;
+        cursor: pointer;
+    }
+    .notif-item:last-child { border-bottom: none; }
+    .notif-item:hover { background: var(--bg); }
+    
+    .notif-icon {
+        font-size: 20px; flex-shrink: 0;
+        margin-top: 2px;
+    }
+    
+    .notif-content { flex: 1; }
+    .notif-title { font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 3px; }
+    .notif-time { font-size: 12px; color: var(--text-2); }
+    
+    .empty-notif {
+        text-align: center; padding: 60px 30px;
+    }
+    .empty-icon { font-size: 48px; margin-bottom: 16px; }
+    .empty-title { font-size: 16px; font-weight: 700; margin-bottom: 6px; color: var(--text); }
+    .empty-text { font-size: 13px; color: var(--text-2); }
 </style>
+} 
+
+<div class="notif-wrapper">
+    <!-- Page Header -->
+    <div class="notif-header">
+        <h1 class="notif-title">🔔 Notifications</h1>
+        <p class="notif-subtitle">Stay updated with your activity and discussions</p>
+    </div>
+
+    <!-- Notifications List -->
+    @if (Model?.Notifications?.Any() == true)
+    {
+        <div class="notif-container">
+            @foreach (var notif in Model.Notifications.OrderByDescending(n => n.CreatedAt))
+            {
+                var (icon, color) = notif.Type switch
+                {
+                    "Answer" => ("💬", "var(--indigo)"),
+                    "Upvote" => ("👍", "var(--amber)"),
+                    "BestAnswer" => ("⭐", "var(--emerald)"),
+                    "SessionAccepted" => ("✅", "var(--emerald)"),
+                    _ => ("🔔", "var(--text-2)")
+                };
+                
+                var message = notif.Type switch
+                {
+                    "Answer" => "Someone answered your question",
+                    "Upvote" => "Someone upvoted your post",
+                    "BestAnswer" => "Your answer was marked as best!",
+                    "SessionAccepted" => "A tutoring session request was accepted",
+                    _ => $"{notif.Type} notification"
+                };
+
+                <a href="#" style="text-decoration: none; color: inherit; display: block;">
+                    <div class="notif-item">
+                        <div class="notif-icon" style="color: @color">@icon</div>
+                        <div class="notif-content">
+                            <div class="notif-title">@message</div>
+                            <div class="notif-time">@notif.CreatedAt.ToString("MMMM d, yyyy · h:mm tt")</div>
+                        </div>
+                    </div>
+                </a>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="notif-container">
+            <div class="empty-notif">
+                <div class="empty-icon">🧘</div>
+                <h3 class="empty-title">All caught up!</h3>
+                <p class="empty-text">You don't have any new notifications right now</p>
+            </div>
+        </div>
+    }
+</div>

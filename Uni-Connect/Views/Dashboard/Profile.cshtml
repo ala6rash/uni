@@ -5,107 +5,293 @@
 }
 
 @section Styles {
-<link href="~/css/site.css" rel="stylesheet" />
 <style>
-    :root {
-        --indigo: #3D52A0; --indigo-dark: #2d3f7a; --indigo-light: #EEF2FF;
-        --violet: #7091E6; --violet-light: #EDE9FE;
-        --amber: #F59E0B; --amber-light: #FEF3C7;
-        --bg: #F8F9FF; --surface: #fff; --border: #E2E8F0;
-        --text: #0F172A; --text-2: #64748B;
-        --radius: 12px;
+    .profile-wrapper { max-width: 1000px; margin: 0 auto; }
+    
+    .profile-cover {
+        height: 180px; border-radius: 16px; overflow: hidden;
+        position: relative; margin-bottom: 60px;
+        background: linear-gradient(135deg, var(--indigo-light) 0%, var(--violet-light) 100%);
     }
-
-    body { background: var(--bg); color: var(--text); }
-    .app-wrap { max-width: 1440px; margin: 0 auto; display: grid; grid-template-columns: 260px 1fr; gap: 24px; padding: 24px 5%; min-height: calc(100vh - 64px); }
+    .profile-cover-overlay {
+        position: absolute; inset: 0;
+        background: linear-gradient(180deg, transparent 40%, rgba(61,82,160,.2));
+    }
     
-    .sidebar { position: sticky; top: 24px; height: fit-content; }
-    .sidebar-user { display: flex; align-items: center; gap: 12px; padding: 12px; border-radius: 16px; background: var(--surface); border: 1px solid var(--border); text-decoration: none; color: inherit; margin-bottom: 20px; }
+    .profile-avatar-wrap {
+        position: absolute; bottom: -50px; left: 24px;
+    }
+    .profile-avatar {
+        width: 120px; height: 120px; border-radius: 16px;
+        border: 4px solid var(--surface); overflow: hidden;
+        box-shadow: 0 4px 16px rgba(15,23,42,.15);
+    }
+    .profile-avatar img { width: 100%; height: 100%; object-fit: cover; }
     
-    .nav-item { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-radius: 12px; font-size: 14px; font-weight: 700; color: var(--text-2); text-decoration: none; transition: all .2s; margin-bottom: 4px; }
-    .nav-item:hover { background: var(--indigo-light); color: var(--indigo); }
-    .nav-item.active { background: var(--indigo); color: #fff; box-shadow: 0 4px 12px rgba(61,82,160,0.15); }
-
-    .profile-banner { height: 200px; background: linear-gradient(135deg, var(--indigo), var(--violet)); border-radius: 24px; position: relative; margin-bottom: 80px; }
-    .profile-avatar-wrap { position: absolute; bottom: -60px; left: 40px; }
-    .prof-av { width: 120px; height: 120px; border-radius: 30px; border: 6px solid var(--bg); background: var(--surface); display: flex; align-items: center; justify-content: center; overflow: hidden; }
-
-    .stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 20px; text-align: center; }
-    .stat-val { font-size: 24px; font-weight: 900; margin-bottom: 4px; }
+    .profile-header {
+        display: flex; align-items: flex-start;
+        justify-content: space-between; gap: 16px;
+        margin-bottom: 24px; flex-wrap: wrap;
+    }
     
-    .chip { display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px; border-radius: 99px; font-size: 13px; font-weight: 800; }
-    .chip-indigo { background: var(--indigo-light); color: var(--indigo); }
-    .chip-violet { background: var(--violet-light); color: var(--violet); }
+    .profile-info h1 { font-size: 28px; font-weight: 800; margin-bottom: 8px; }
+    .profile-badges {
+        display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px;
+    }
+    .profile-bio {
+        font-size: 14px; color: var(--text-2);
+        line-height: 1.6; max-width: 600px; margin-top: 8px;
+    }
+    
+    .profile-actions { display: flex; gap: 8px; }
+    
+    .profile-stats {
+        display: grid; grid-template-columns: repeat(5, 1fr);
+        gap: 12px; margin-bottom: 28px;
+    }
+    @@media (max-width: 768px) {
+        .profile-stats { grid-template-columns: repeat(3, 1fr); }
+    }
+    @@media (max-width: 480px) {
+        .profile-stats { grid-template-columns: repeat(2, 1fr); }
+    }
+    
+    .stat-item {
+        background: var(--surface); border: 1px solid var(--border);
+        border-radius: var(--radius); padding: 16px;
+        text-align: center;
+    }
+    .stat-num {
+        font-size: 20px; font-weight: 800;
+        margin-bottom: 4px;
+    }
+    .stat-label {
+        font-size: 11px; font-weight: 700;
+        color: var(--text-2); text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    .progress-section {
+        background: var(--surface); border: 1px solid var(--border);
+        border-radius: var(--radius); padding: 20px;
+        margin-bottom: 28px; display: flex;
+        align-items: center; gap: 20px; flex-wrap: wrap;
+    }
+    .progress-content { flex: 1; min-width: 200px; }
+    .progress-label {
+        font-size: 13px; font-weight: 700;
+        color: var(--text); margin-bottom: 8px;
+        display: flex; justify-content: space-between;
+    }
+    .progress-bar {
+        height: 8px; background: var(--border);
+        border-radius: 99px; overflow: hidden;
+    }
+    .progress-fill {
+        height: 100%; background: linear-gradient(90deg, var(--indigo), var(--violet));
+        transition: width .3s ease;
+    }
+    .progress-text {
+        font-size: 12px; color: var(--text-2);
+        margin-top: 6px;
+    }
+    
+    .tabs {
+        display: flex; gap: 16px; border-bottom: 2px solid var(--border);
+        margin-bottom: 24px; flex-wrap: wrap;
+    }
+    .tab {
+        padding: 12px 0; background: none; border: none;
+        font-size: 14px; font-weight: 600; color: var(--text-2);
+        cursor: pointer; border-bottom: 3px solid transparent;
+        margin-bottom: -2px; transition: all .2s;
+    }
+    .tab:hover { color: var(--indigo); }
+    .tab.active {
+        color: var(--indigo); font-weight: 700;
+        border-bottom-color: var(--indigo);
+    }
+    
+    .activity-list { display: flex; flex-direction: column; gap: 14px; }
+    
+    .activity-card {
+        background: var(--surface); border: 1px solid var(--border);
+        border-radius: var(--radius); padding: 18px;
+        cursor: pointer; transition: all .2s;
+    }
+    .activity-card:hover {
+        box-shadow: var(--shadow-md); transform: translateY(-1px);
+    }
+    
+    .activity-meta {
+        display: flex; align-items: center; gap: 8px;
+        margin-bottom: 10px; flex-wrap: wrap;
+        font-size: 12px; color: var(--text-2);
+    }
+    
+    .activity-title {
+        font-size: 14px; font-weight: 700;
+        margin-bottom: 8px; line-height: 1.4; color: var(--text);
+    }
+    
+    .activity-stats {
+        display: flex; gap: 16px; font-size: 12px;
+        color: var(--text-2); font-weight: 600;
+    }
 </style>
 }
 
-<div class="app-wrap">
-    <aside class="sidebar">
-        <a asp-action="Profile" class="sidebar-user">
-            <div class="av av-md">
-                <img src="https://ui-avatars.com/api/?name=@Model.Name&background=3D52A0&color=fff&size=44" alt="@Model.Name" />
-            </div>
-            <div>
-                <div class="sidebar-user-name" style="font-weight:800; font-size:15px">@Model.Name</div>
-                <div class="sidebar-user-pts" style="color:var(--amber); font-weight:700; font-size:13px">🪙 @Model.Points pts</div>
-            </div>
-        </a>
-
-        <nav class="sidebar-nav">
-            <a asp-action="Dashboard" class="nav-item"><span class="ni">🏠</span>Home Feed</a>
-            <a asp-action="CreatePost" class="nav-item"><span class="ni">✏️</span>Ask a Question</a>
-            <a asp-action="Sessions" class="nav-item"><span class="ni">💬</span>My Sessions</a>
-            <a asp-action="Leaderboard" class="nav-item"><span class="ni">🏆</span>Leaderboard</a>
-            <a asp-action="Notifications" class="nav-item"><span class="ni">🔔</span>Notifications</a>
-            <a asp-action="Profile" class="nav-item active"><span class="ni">👤</span>My Profile</a>
-        </nav>
-    </aside>
-
-    <main class="main" style="max-width: 900px">
-        <div class="profile-banner">
-            <div class="profile-avatar-wrap">
-                <div class="prof-av">
-                    <img src="https://ui-avatars.com/api/?name=@Model.Name&background=3D52A0&color=fff&size=120" alt="@Model.Name" style="width:100%; height:100%" />
-                </div>
-            </div>
-            <div style="position: absolute; bottom: 16px; right: 24px">
-                <button class="btn btn-white btn-sm">Edit Profile ✏️</button>
+<div class="profile-wrapper">
+    <!-- Profile Cover -->
+    <div class="profile-cover">
+        <div class="profile-cover-overlay"></div>
+        <div class="profile-avatar-wrap">
+            <div class="profile-avatar">
+                <img src="https://ui-avatars.com/api/?name=@Model.Name&background=3D52A0&color=fff&size=120" alt="@Model.Name" />
             </div>
         </div>
+    </div>
 
-        <div style="margin-bottom: 32px">
-            <h1 style="font-size: 32px; font-weight: 900; letter-spacing: -1px; margin-bottom: 12px">@Model.Name</h1>
-            <div style="display: flex; gap: 10px; align-items: center">
+    <!-- Profile Header -->
+    <div class="profile-header">
+        <div class="profile-info">
+            <h1>@Model.Name</h1>
+            <div class="profile-badges">
                 <span class="chip chip-indigo">💻 @Model.Faculty</span>
                 <span class="chip chip-violet">🎓 @Model.YearOfStudy</span>
-                <span class="chip" style="background:var(--amber-light); color:var(--amber)">🪙 @Model.Points Points</span>
+                <span class="chip chip-amber">🪙 @Model.Points pts</span>
             </div>
-            <p style="color: var(--text-2); font-size: 15px; margin-top: 20px; line-height: 1.8; max-width: 600px">
-                Dedicated Philadelphia University student. Always looking to collaborate and solve complex problems with my peers.
+            <p class="profile-bio">
+                Dedicated Philadelphia University student passionate about problem-solving and collaboration. Always happy to help fellow students! 🚀
             </p>
         </div>
-
-        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 32px">
-            <div class="stat-card"><div class="stat-val" style="color:var(--indigo)">@Model.Points</div><div style="font-size:12px; font-weight:700; color:var(--text-2)">TOTAL POINTS</div></div>
-            <div class="stat-card"><div class="stat-val" style="color:var(--emerald)">47</div><div style="font-size:12px; font-weight:700; color:var(--text-2)">ANSWERS</div></div>
-            <div class="stat-card"><div class="stat-val" style="color:var(--amber)">12</div><div style="font-size:12px; font-weight:700; color:var(--text-2)">QUESTIONS</div></div>
-            <div class="stat-card"><div class="stat-val" style="color:var(--violet)">8</div><div style="font-size:12px; font-weight:700; color:var(--text-2)">SESSIONS</div></div>
+        <div class="profile-actions">
+            <a asp-action="Settings" class="btn btn-ghost btn-sm">✏️ Edit Profile</a>
         </div>
+    </div>
 
-        <div style="border-top: 1.5px solid var(--border); padding-top: 32px">
-            <h2 style="font-size: 20px; font-weight: 850; margin-bottom: 24px">Recent Activity</h2>
-            <div style="display: flex; flex-direction: column; gap: 16px">
-                <div class="card" style="background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:20px">
-                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px">
-                        <span class="chip chip-indigo">IT Faculty</span>
-                        <span style="font-size:12px; color:var(--text-2); font-weight:600">2 hours ago</span>
-                    </div>
-                    <div style="font-weight:800; font-size:16px; margin-bottom:8px; line-height:1.4">How does AVL tree rotation actually work?</div>
-                    <div style="display:flex; gap:16px; font-size:13px; color:var(--text-2); font-weight:600">
-                        <span>👍 42 upvotes</span><span>💬 7 answers</span>
-                    </div>
+    <!-- Stats Grid -->
+    <div class="profile-stats">
+        <div class="stat-item">
+            <div class="stat-num" style="color: var(--indigo)">@Model.Points</div>
+            <div class="stat-label">🪙 Points</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-num" style="color: var(--emerald)">47</div>
+            <div class="stat-label">💬 Answers</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-num" style="color: var(--amber)">12</div>
+            <div class="stat-label">❓ Questions</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-num" style="color: var(--violet)">8</div>
+            <div class="stat-label">🎓 Sessions</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-num" style="color: var(--rose)">4.8</div>
+            <div class="stat-label">⭐ Rating</div>
+        </div>
+    </div>
+
+    <!-- Progress to Tutor -->
+    <div class="progress-section">
+        <div class="progress-content">
+            <div class="progress-label">
+                <span>Progress to <strong>Verified Tutor</strong></span>
+                <span>@Model.Points / 1000 pts</span>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" style="width: @(Math.Min((Model.Points / 10), 100))%"></div>
+            </div>
+            <div class="progress-text">@(1000 - Model.Points) pts to go! Level up to unlock tutor badge.</div>
+        </div>
+        <a asp-action="Points" class="btn btn-amber btn-sm">View Rewards →</a>
+    </div>
+
+    <!-- Activity Tabs -->
+    <div class="tabs">
+        <button class="tab active" onclick="switchTab('answers',this)">💬 Recent Answers</button>
+        <button class="tab" onclick="switchTab('questions',this)">❓ Your Questions</button>
+        <button class="tab" onclick="switchTab('sessions',this)">🎓 Sessions</button>
+    </div>
+
+    <!-- Tab Content: Answers -->
+    <div id="tab-answers">
+        <div class="activity-list">
+            <div class="activity-card">
+                <div class="activity-meta">
+                    <span class="chip chip-emerald">✓ Best Answer</span>
+                    <span class="chip chip-violet">CS302</span>
+                    <span>+15 pts</span>
+                </div>
+                <a href="#" style="text-decoration: none; color: var(--indigo); font-weight: 700;">
+                    <div class="activity-title">How does AVL tree rotation actually work?</div>
+                </a>
+                <div class="activity-stats">
+                    <span>👍 38 upvotes</span>
+                    <span>👁️ 124 views</span>
+                </div>
+            </div>
+            
+            <div class="activity-card">
+                <div class="activity-meta">
+                    <span class="chip chip-indigo">Top Answer</span>
+                    <span class="chip chip-violet">CS401</span>
+                    <span>+10 pts</span>
+                </div>
+                <a href="#" style="text-decoration: none; color: var(--indigo); font-weight: 700;">
+                    <div class="activity-title">Difference between Dijkstra and Bellman-Ford algorithms?</div>
+                </a>
+                <div class="activity-stats">
+                    <span>👍 22 upvotes</span>
+                    <span>👁️ 84 views</span>
                 </div>
             </div>
         </div>
-    </main>
+    </div>
+
+    <!-- Tab Content: Questions (Hidden) -->
+    <div id="tab-questions" class="hidden">
+        <div class="activity-list">
+            <div class="activity-card">
+                <div class="activity-meta">
+                    <span class="chip chip-emerald">✓ Solved</span>
+                    <span class="chip chip-indigo">CS302</span>
+                </div>
+                <div class="activity-title">How do I optimize binary search in a rotated array?</div>
+                <div class="activity-stats">
+                    <span>💬 4 answers</span>
+                    <span>👁️ 56 views</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tab Content: Sessions (Hidden) -->
+    <div id="tab-sessions" class="hidden">
+        <div style="text-align: center; padding: 40px 20px; background: var(--surface); border-radius: var(--radius);">
+            <div style="font-size: 28px; margin-bottom: 12px;">🎓</div>
+            <div style="font-size: 16px; font-weight: 700; margin-bottom: 6px;">No sessions yet</div>
+            <div style="font-size: 13px; color: var(--text-2);">Start your first tutoring session to help students and earn points!</div>
+        </div>
+    </div>
 </div>
+
+<script>
+    function switchTab(tabName, el) {
+        // Hide all tabs
+        ['answers', 'questions', 'sessions'].forEach(t => {
+            const tab = document.getElementById('tab-' + t);
+            if (tab) tab.classList.add('hidden');
+        });
+        
+        // Show selected tab
+        const selected = document.getElementById('tab-' + tabName);
+        if (selected) selected.classList.remove('hidden');
+        
+        // Update active tab button
+        document.querySelectorAll('.tab').forEach(btn => btn.classList.remove('active'));
+        if (el) el.classList.add('active');
+    }
+</script>

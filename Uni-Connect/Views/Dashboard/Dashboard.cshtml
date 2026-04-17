@@ -5,178 +5,160 @@
 }
 
 @section Styles {
-<link href="~/css/design-system.css" rel="stylesheet" />
-<style>
-    :root {
-        --indigo: #3D52A0; --indigo-dark: #2d3f7a; --indigo-light: #EEF2FF;
-        --violet: #7091E6; --violet-light: #EDE9FE;
-        --amber: #F59E0B; --amber-light: #FEF3C7;
-        --bg: #F8F9FF; --surface: #fff; --border: #E2E8F0;
-        --text: #0F172A; --text-2: #64748B;
-        --radius: 12px;
-    }
-
-    body { background: var(--bg); color: var(--text); }
-    .navbar { position: sticky; top: 0; z-index: 100; background: var(--surface); border-bottom: 1px solid var(--border); padding: 0 5%; height: 64px; display: flex; align-items: center; justify-content: space-between; }
-    .nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; color: inherit; font-weight: 900; font-size: 20px; }
-    .nav-logo-icon { width: 34px; height: 34px; background: linear-gradient(135deg, var(--indigo), var(--violet)); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 16px; }
-    
-    .app-wrap { max-width: 1440px; margin: 0 auto; display: grid; grid-template-columns: 260px 1fr 300px; gap: 24px; padding: 24px 5%; min-height: calc(100vh - 64px); }
-    
-    .sidebar { position: sticky; top: 88px; height: fit-content; }
-    .sidebar-user { display: flex; align-items: center; gap: 12px; padding: 12px; border-radius: 16px; background: var(--surface); border: 1px solid var(--border); text-decoration: none; color: inherit; margin-bottom: 20px; transition: transform .2s; }
-    .sidebar-user:hover { transform: translateY(-2px); border-color: var(--indigo-mid); }
-    .sidebar-user-name { font-weight: 800; font-size: 15px; }
-    .sidebar-user-pts { font-size: 13px; color: var(--amber); font-weight: 700; margin-top: 2px; }
-
-    .nav-item { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-radius: 12px; font-size: 14px; font-weight: 700; color: var(--text-2); text-decoration: none; cursor: pointer; transition: all .2s; margin-bottom: 4px; }
-    .nav-item:hover { background: var(--indigo-light); color: var(--indigo); }
-    .nav-item.active { background: var(--indigo); color: #fff; box-shadow: 0 4px 12px rgba(61,82,160,0.15); }
-    .ni { font-size: 18px; width: 24px; text-align: center; }
-
-    .q-card { background: var(--surface); border: 1.5px solid var(--border); border-radius: 16px; padding: 20px; text-decoration: none; color: inherit; display: block; margin-bottom: 16px; transition: all .2s; }
-    .q-card:hover { transform: translateY(-2px); border-color: var(--indigo-mid); box-shadow: 0 8px 32px rgba(61,82,160,0.06); }
-    .q-card-title { font-size: 17px; font-weight: 800; margin-bottom: 8px; line-height: 1.4; color: var(--text); }
-    .q-card-meta { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
-    
-    .chip { display: inline-flex; align-items: center; gap: 4px; padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: 800; }
-    .chip-indigo { background: var(--indigo-light); color: var(--indigo); }
-    .chip-emerald { background: var(--emerald-light); color: #065F46; }
-    
-    .pts-widget { background: linear-gradient(135deg, var(--indigo), var(--violet)); border-radius: 16px; padding: 20px; color: #fff; margin-top: 20px; box-shadow: 0 8px 24px rgba(61,82,160,0.12); }
-    .pts-widget-num { font-size: 28px; font-weight: 900; margin-bottom: 4px; }
-    .pts-widget-bar { height: 6px; background: rgba(255,255,255,0.2); border-radius: 10px; margin: 12px 0; overflow: hidden; }
-    .pts-widget-fill { height: 100%; background: var(--amber); border-radius: 10px; }
-
-    @@media (max-width: 1024px) {
-        .app-wrap { grid-template-columns: 1fr; }
-        .sidebar, .right-col { display: none; }
-    }
-</style>
+    <style>
+        .dashboard-header { margin-bottom: 32px; }
+        .dashboard-title { font-size: 28px; font-weight: 800; margin-bottom: 4px; }
+        .dashboard-subtitle { font-size: 14px; color: var(--text-2); }
+        
+        .tab-container { display: flex; gap: 20px; margin-bottom: 28px; border-bottom: 2px solid var(--border); padding-bottom: 0; }
+        .tab-btn {
+            padding: 12px 0; background: none; border: none;
+            font-size: 14px; font-weight: 600; color: var(--text-2);
+            cursor: pointer; border-bottom: 3px solid transparent;
+            margin-bottom: -2px; transition: all .2s;
+            text-decoration: none;
+        }
+        .tab-btn:hover { color: var(--indigo); }
+        .tab-btn.active { color: var(--indigo); font-weight: 700; border-bottom-color: var(--indigo); }
+        
+        .questions-list { display: flex; flex-direction: column; gap: 16px; }
+        
+        .q-card-enhanced {
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: var(--radius); padding: 20px;
+            cursor: pointer; transition: all .2s ease;
+            display: block; text-decoration: none;
+            color: inherit;
+        }
+        .q-card-enhanced:hover {
+            box-shadow: var(--shadow-md); transform: translateY(-2px);
+            border-color: var(--indigo);
+        }
+        
+        .q-header {
+            display: flex; align-items: center; gap: 12px;
+            margin-bottom: 12px; flex-wrap: wrap;
+        }
+        
+        .q-avatar { width: 36px; height: 36px; border-radius: 50%; object-fit: cover; }
+        
+        .q-meta {
+            display: flex; align-items: center; gap: 8px;
+            flex-wrap: wrap; font-size: 12px;
+        }
+        .q-author { font-weight: 700; color: var(--text); font-size: 13px; }
+        .q-date { color: var(--text-2); }
+        
+        .q-title {
+            font-size: 15px; font-weight: 700;
+            margin-bottom: 8px; line-height: 1.4;
+            color: var(--text);
+        }
+        
+        .q-content {
+            font-size: 13px; color: var(--text-2);
+            line-height: 1.6; margin-bottom: 12px;
+        }
+        
+        .q-tags {
+            display: flex; align-items: center; gap: 8px;
+            margin-bottom: 12px; flex-wrap: wrap;
+        }
+        
+        .q-stats {
+            display: flex; gap: 16px; font-size: 13px;
+            color: var(--text-2);
+        }
+        
+        .empty-state {
+            text-align: center; padding: 60px 24px;
+            background: var(--surface); border-radius: var(--radius);
+        }
+        .empty-icon { font-size: 48px; margin-bottom: 16px; }
+        .empty-title { font-size: 18px; font-weight: 700; margin-bottom: 8px; color: var(--text); }
+        .empty-text { font-size: 14px; color: var(--text-2); margin-bottom: 24px; }
+    </style>
 }
 
-<div class="app-wrap">
-    <!-- SIDEBAR -->
-    <aside class="sidebar">
-        <a asp-action="Profile" class="sidebar-user">
-            <div class="av av-md">
-                <img src="https://ui-avatars.com/api/?name=@Model.Name&background=3D52A0&color=fff&size=44" alt="@Model.Name" />
-            </div>
-            <div>
-                <div class="sidebar-user-name">@Model.Name</div>
-                <div class="sidebar-user-pts">🪙 @Model.Points pts</div>
-            </div>
-        </a>
+<div style="max-width: 1000px; margin: 0 auto;">
+    <!-- Page Header -->
+    <div class="dashboard-header">
+        <h1 class="dashboard-title">Welcome back, @(Model.Name.Split(' ').First())! 👋</h1>
+        <p class="dashboard-subtitle">See what's happening in your community today</p>
+    </div>
 
-        <nav class="sidebar-nav">
-            <a asp-action="Dashboard" class="nav-item active"><span class="ni">🏠</span>Home Feed</a>
-            <a asp-action="CreatePost" class="nav-item"><span class="ni">✏️</span>Ask a Question</a>
-            <a asp-action="Sessions" class="nav-item"><span class="ni">💬</span>My Sessions</a>
-            <a asp-action="Leaderboard" class="nav-item"><span class="ni">🏆</span>Leaderboard</a>
-            <a asp-action="Notifications" class="nav-item">
-                <span class="ni">🔔</span>Notifications
-                @if (Model.Notifications?.Count > 0) { <span class="nav-badge" style="background:var(--rose); color:#fff; padding:2px 6px; border-radius:10px; font-size:10px; margin-left:auto">@Model.Notifications.Count</span> }
-            </a>
-            <a asp-action="Profile" class="nav-item"><span class="ni">👤</span>My Profile</a>
-            <a asp-action="Points" class="nav-item"><span class="ni">🪙</span>Points & Rewards</a>
-        </nav>
+    <!-- Tabs (Not implemented yet, placeholder) -->
+    <div class="tab-container">
+        <button class="tab-btn active">🏠 All Questions</button>
+        <button class="tab-btn">👤 My Faculty</button>
+        <button class="tab-btn">🔥 Trending</button>
+    </div>
 
-        <a asp-action="Points" style="text-decoration:none">
-            <div class="pts-widget">
-                <div class="pts-widget-num">@Model.Points</div>
-                <div class="pts-widget-label">🪙 Your Points</div>
-                @{ var progress = Math.Min(100, (Model.Points / 1000.0) * 100); }
-                <div class="pts-widget-bar"><div class="pts-widget-fill" style="width:@progress%"></div></div>
-                <div class="pts-widget-sub">@(1000 - Model.Points > 0 ? (1000 - Model.Points) + " pts to Verified Tutor" : "Verified Tutor 🏅")</div>
-            </div>
-        </a>
-        
-        <form asp-controller="Login" asp-action="Logout" method="post" style="margin-top: 20px">
-            @Html.AntiForgeryToken()
-            <button type="submit" class="nav-item" style="background:none; border:none; width:100%; text-align:left; color:var(--rose)">
-                <span class="ni">🚪</span>Sign Out
-            </button>
-        </form>
-    </aside>
-
-    <!-- MAIN CONTENT -->
-    <main class="main">
-        <div style="margin-bottom: 24px">
-            <h1 style="font-size: 24px; font-weight: 800; margin-bottom: 4px">Welcome back, @Model.Name.Split(' ')[0]!</h1>
-            <p style="color: var(--text-2); font-size: 14px">See what's happening in your faculty today.</p>
-        </div>
-
-        <div class="tabs" style="display: flex; gap: 8px; margin-bottom: 20px; border-bottom: 1.5px solid var(--border)">
-            <div class="tab active" style="padding: 12px 20px; cursor: pointer; font-weight: 800; border-bottom: 2px solid var(--indigo); font-size: 14px">All Questions</div>
-            <div class="tab" style="padding: 12px 20px; cursor: pointer; font-weight: 700; color: var(--text-2); font-size: 14px">My Faculty</div>
-            <div class="tab" style="padding: 12px 20px; cursor: pointer; font-weight: 700; color: var(--text-2); font-size: 14px">Trending 🔥</div>
-        </div>
-
-        <div id="cards-container">
-            @{
-                var posts = ViewBag.Posts as List<Post> ?? new List<Post>();
-                if (posts.Any())
+    <!-- Questions Feed -->
+    <div class="questions-list">
+        @{
+            var posts = ViewBag.Posts as List<Post>;
+            if (posts != null && posts.Count > 0)
+            {
+                foreach (var post in posts)
                 {
-                    foreach (var post in posts)
-                    {
-                        <a href="@Url.Action("SinglePost", new { id = post.PostID })" class="q-card" style="text-decoration:none;">
-                            <div class="q-card-meta">
-                                <div style="display:flex; align-items:center; gap:6px">
-                                    <div class="av av-sm"><img src="https://ui-avatars.com/api/?name=@post.User?.Name&background=3D52A0&color=fff&size=36" alt="@post.User?.Name" style="border-radius:50%; width:36px; height:36px;"></div>
-                                    <span style="font-weight:700; font-size:13px">@(post.User?.Name?.Split(' ').First() ?? "User")</span>
+                    <a asp-action="SinglePost" asp-route-id="@post.PostID" class="q-card-enhanced">
+                        <!-- Header with author info -->
+                        <div class="q-header">
+                            <img src="https://ui-avatars.com/api/?name=@(post.User?.Name ?? "User")&background=3D52A0&color=fff" 
+                                 alt="Avatar" class="q-avatar" />
+                            <div>
+                                <div class="q-meta">
+                                    <span class="q-author">@(post.User?.Name?.Split(' ').First() ?? "User")</span>
+                                    <span class="q-date">@post.CreatedAt.ToString("MMM dd, yyyy")</span>
                                 </div>
-                                <span style="font-size:12px; color:var(--text-2)">· @post.CreatedAt.ToString("h:mm tt")</span>
-                                <span class="chip chip-indigo" style="margin-left:auto">@post.Category?.Name</span>
-                                @if (post.Answers?.Any(a => a.IsAccepted && !a.IsDeleted) == true)
-                                {
-                                    <span class="chip chip-emerald">✓ Solved</span>
+                            </div>
+                        </div>
+
+                        <!-- Title -->
+                        <h3 class="q-title">@post.Title</h3>
+
+                        <!-- Preview -->
+                        @if (!string.IsNullOrEmpty(post.Content))
+                        {
+                            <p class="q-content">
+                                @{
+                                    var preview = post.Content.Length > 150 ? post.Content.Substring(0, 150) + "..." : post.Content;
                                 }
-                            </div>
-                            <div class="q-card-title">@post.Title</div>
-                            <p style="font-size: 14px; color: var(--text-2); line-height: 1.6; margin-bottom: 12px" class="clamp-2">@post.Content.Substring(0, Math.Min(post.Content.Length, 150))...</p>
-                            <div style="display: flex; gap: 16px; font-size: 13px; font-weight: 600; color: var(--text-2)">
-                                <span>👍 @post.Upvotes</span><span>💬 @(post.Answers?.Count ?? 0) answers</span>
-                                <button class="btn btn-primary btn-sm" style="margin-left: auto">💬 Request Session</button>
-                            </div>
-                        </a>
-                    }
-                }
-                else
-                {
-                    <div style="text-align:center; padding:40px; color:var(--text-2)">
-                        <p style="font-size:16px; font-weight:600; margin-bottom:10px">No questions yet</p>
-                        <p style="font-size:14px; margin-bottom:20px">Be the first to ask something!</p>
-                        <a asp-action="CreatePost" class="btn btn-primary">Ask a Question</a>
-                    </div>
+                                @preview
+                            </p>
+                        }
+
+                        <!-- Tags/Category -->
+                        <div class="q-tags">
+                            @if (post.Category != null)
+                            {
+                                <span class="chip chip-indigo">@post.Category.Name</span>
+                            }
+                            @if (post.Answers?.Any(a => a.IsAccepted && !a.IsDeleted) == true)
+                            {
+                                <span class="chip chip-emerald">✓ Solved</span>
+                            }
+                        </div>
+
+                        <!-- Stats -->
+                        <div class="q-stats">
+                            <span>👍 @post.Upvotes upvotes</span>
+                            <span>💬 @(post.Answers?.Count(a => !a.IsDeleted) ?? 0) answers</span>
+                            <span>👁️ 0 views</span>
+                        </div>
+                    </a>
                 }
             }
-        </div>
-    </main>
-
-    <!-- RIGHT SIDEBAR -->
-    <aside class="right-col">
-        <div class="card" style="background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:20px; margin-bottom:16px">
-            <div style="font-weight:800; margin-bottom:16px; font-size:15px">📊 My Activity</div>
-            <div style="display:flex; justify-content:space-between; font-size:13px; padding:10px 0; border-bottom:1px solid var(--border)"><span style="color:var(--text-2); font-weight:600">Points earned</span><span style="font-weight:800; color:var(--amber)">+85</span></div>
-            <div style="display:flex; justify-content:space-between; font-size:13px; padding:10px 0; border-bottom:1px solid var(--border)"><span style="color:var(--text-2); font-weight:600">Answers given</span><span style="font-weight:800">7</span></div>
-            <div style="display:flex; justify-content:space-between; font-size:13px; padding:10px 0"><span style="color:var(--text-2); font-weight:600">🔥 Streak</span><span style="font-weight:800">7 days</span></div>
-        </div>
-
-        <div class="card" style="background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:20px">
-            <div style="font-weight:800; margin-bottom:16px; font-size:15px">🏆 Top Contributors</div>
-            <div style="display:flex; flex-direction:column; gap:12px">
-                <div style="display:flex; align-items:center; gap:10px">
-                    <div class="av av-sm"><img src="https://i.pravatar.cc/36?img=65" style="border-radius:50%" /></div>
-                    <div style="flex:1"><div style="font-size:13px; font-weight:700">Sami T. ✓</div><div style="font-size:11px; color:var(--text-2)">1,240 pts</div></div>
+            else
+            {
+                <div class="empty-state">
+                    <div class="empty-icon">📝</div>
+                    <h3 class="empty-title">No questions yet</h3>
+                    <p class="empty-text">Be the first to ask a question in your community!</p>
+                    <a asp-action="CreatePost" class="btn btn-primary">✏️ Ask a Question</a>
                 </div>
-                <div style="display:flex; align-items:center; gap:10px">
-                    <div class="av av-sm"><img src="https://i.pravatar.cc/36?img=33" style="border-radius:50%" /></div>
-                    <div style="flex:1"><div style="font-size:13px; font-weight:700">Mona A.</div><div style="font-size:11px; color:var(--text-2)">1,080 pts</div></div>
-                </div>
-            </div>
-            <div style="margin-top:16px; text-align:center">
-                <a asp-action="Leaderboard" style="font-size:13px; color:var(--indigo); font-weight:800; text-decoration:none">View All Rankings →</a>
-            </div>
-        </div>
-    </aside>
+            }
+        }
+    </div>
 </div>

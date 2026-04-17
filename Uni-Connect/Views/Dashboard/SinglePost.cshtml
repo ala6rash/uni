@@ -1,0 +1,98 @@
+@model Uni_Connect.Models.Post
+@{
+    ViewData["Title"] = Model?.Title ?? "Post";
+    Layout = "~/Views/Shared/_DashboardLayout.cshtml";
+}
+
+<div style="max-width: 900px; margin: 0 auto; padding: 20px;">
+    <!-- Back Button -->
+    <a asp-action="Dashboard" style="display: inline-flex; align-items: center; gap: 8px; color: #3D52A0; text-decoration: none; margin-bottom: 24px; font-weight: 600;">
+        <span style="font-size: 20px;">←</span> Back to Dashboard
+    </a>
+
+    @if (Model != null)
+    {
+        <!-- Post Header -->
+        <div style="background: white; border-radius: 12px; padding: 24px; margin-bottom: 20px; border: 1.5px solid #E2E8F0;">
+            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px; flex-wrap: wrap;">
+                <img src="https://ui-avatars.com/api/?name=@(Model.User?.Name ?? "User")&background=3D52A0&color=fff&size=40" 
+                     alt="Avatar" style="width: 40px; height: 40px; border-radius: 50%;" />
+                <div>
+                    <strong style="font-size: 14px; color: #0F172A; display: block;">@(Model.User?.Name?.Split(' ').First() ?? "User")</strong>
+                    <span style="font-size: 12px; color: #64748B;">@Model.CreatedAt.ToString("MMM dd, yyyy h:mm tt")</span>
+                </div>
+                @if (Model.Category != null)
+                {
+                    <span style="background: #EEF2FF; color: #3D52A0; padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 700; margin-left: auto;">
+                        @Model.Category.Name
+                    </span>
+                }
+            </div>
+
+            <!-- Title -->
+            <h1 style="font-size: 28px; font-weight: 800; color: #0F172A; margin: 0 0 16px 0; line-height: 1.4;">
+                @Model.Title
+            </h1>
+
+            <!-- Content -->
+            <div style="font-size: 15px; color: #1E293B; line-height: 1.7; margin-bottom: 24px; white-space: pre-wrap;">@Model.Content</div>
+
+            <!-- Stats -->
+            <div style="display: flex; gap: 24px; font-size: 14px; color: #64748B; font-weight: 600; border-top: 1px solid #E2E8F0; padding-top: 16px;">
+                <span>👍 @Model.Upvotes upvotes</span>
+                <span>💬 @(Model.Answers?.Count(a => !a.IsDeleted) ?? 0) answers</span>
+                @if (Model.Answers?.Any(a => a.IsAccepted && !a.IsDeleted) == true)
+                {
+                    <span style="color: #065F46;">✓ Solved</span>
+                }
+            </div>
+        </div>
+
+        <!-- Answers Section -->
+        @if (Model.Answers != null && Model.Answers.Any(a => !a.IsDeleted))
+        {
+            <div style="background: white; border-radius: 12px; padding: 24px; border: 1.5px solid #E2E8F0;">
+                <h2 style="font-size: 18px; font-weight: 800; color: #0F172A; margin: 0 0 20px 0;">
+                    Answers (@(Model.Answers.Count(a => !a.IsDeleted)))
+                </h2>
+
+                @foreach (var answer in Model.Answers.Where(a => !a.IsDeleted).OrderByDescending(a => a.IsAccepted).ThenByDescending(a => a.Upvotes))
+                {
+                    <div style="border-left: 4px solid @(answer.IsAccepted ? "#065F46" : "#E2E8F0"); padding: 16px; margin-bottom: 16px; background: @(answer.IsAccepted ? "#ECFDF5" : "#F8FAFC");">
+                        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
+                            <img src="https://ui-avatars.com/api/?name=@(answer.User?.Name ?? "User")&background=7091E6&color=fff&size=32" 
+                                 alt="Avatar" style="width: 32px; height: 32px; border-radius: 50%;" />
+                            <div style="flex: 1;">
+                                <strong style="font-size: 13px; color: #0F172A;">@(answer.User?.Name?.Split(' ').First() ?? "User")</strong>
+                                <span style="font-size: 12px; color: #64748B; margin-left: 8px;">@answer.CreatedAt.ToString("MMM dd, yyyy")</span>
+                                @if (answer.IsAccepted)
+                                {
+                                    <span style="background: #065F46; color: white; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 700; margin-left: 8px;">✓ Accepted Answer</span>
+                                }
+                            </div>
+                            <span style="font-size: 13px; color: #64748B; font-weight: 600;">👍 @answer.Upvotes</span>
+                        </div>
+                        <p style="font-size: 14px; color: #1E293B; line-height: 1.6; margin: 0; white-space: pre-wrap;">@answer.Content</p>
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <div style="text-align: center; padding: 60px 20px; background: white; border-radius: 12px; border: 1.5px solid #E2E8F0;">
+                <p style="font-size: 16px; font-weight: 700; color: #0F172A; margin: 0 0 8px 0;">
+                    No answers yet
+                </p>
+                <p style="font-size: 14px; color: #64748B; margin: 0;">
+                    Be the first to help answer this question!
+                </p>
+            </div>
+        }
+    }
+    else
+    {
+        <div style="text-align: center; padding: 60px 20px; background: white; border-radius: 12px;">
+            <p style="font-size: 16px; font-weight: 700; color: #0F172A;">Post not found</p>
+        </div>
+    }
+</div>

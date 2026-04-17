@@ -1,3 +1,5 @@
+@using System.Security.Claims
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -34,74 +36,122 @@
             </div>
             <div style="position: relative;">
                 <button class="nav-user" id="navUserBtn" style="display: flex; align-items: center; gap: 8px; padding: 6px 12px; border: none; background: none; cursor: pointer; border-radius: 8px; transition: background .2s;" onmouseover="this.style.background='#EEF2FF'" onmouseout="this.style.background='none'">
-                    <div class="av av-sm"><img src="https://via.placeholder.com/44" alt="User"/></div>
+                    <div class="av av-sm"><img src="https://ui-avatars.com/api/?name=@(User.FindFirst(ClaimTypes.Name)?.Value ?? "Student")&background=3D52A0&color=fff&size=44" alt="User"/></div>
                 </button>
                 <div class="nav-user-dropdown" id="navUserDropdown">
-                    <a href="#" class="nav-dropdown-item" style="text-decoration:none;"><i class="fas fa-user"></i> My Profile</a>
-                    <a href="#" class="nav-dropdown-item" style="text-decoration:none;"><i class="fas fa-cog"></i> Settings</a>
+                    <a asp-controller="Dashboard" asp-action="Profile" class="nav-dropdown-item" style="text-decoration:none;"><i class="fas fa-user"></i> My Profile</a>
+                    <a href="#" title="Coming soon" onclick="return false" class="nav-dropdown-item" style="text-decoration:none;"><i class="fas fa-cog"></i> Settings</a>
                     <hr style="margin:0; border:none; border-top:1px solid #E2E8F0;">
-                    <a asp-controller="Login" asp-action="Logout" class="nav-dropdown-item logout" style="text-decoration:none;"><i class="fas fa-door-open"></i> Sign Out</a>
+                    <form method="post" asp-controller="Login" asp-action="Logout" style="display:inline;">
+                        <button type="submit" class="nav-dropdown-item logout" style="text-decoration:none; background:none; border:none; cursor:pointer; padding:12px 16px; width:100%; text-align:left;"><i class="fas fa-door-open"></i> Sign Out</button>
+                    </form>
                 </div>
             </div>
         </div>
-    </navbar>
+    </nav>
 
-    <!-- SIDEBAR -->
-    <aside class="sidebar" id="sidebar">
-        <a href="#" class="sidebar-user">
-            <div class="av av-md"><img src="https://via.placeholder.com/60" alt="User"/></div>
-            <div>
-                <div class="sidebar-user-name">@(User.FindFirst("FullName")?.Value ?? "Student")</div>
-                <div class="sidebar-user-pts"><i class="fas fa-coins"></i> 1,250 points</div>
-            </div>
-        </a>
+    <!-- SIDEBAR OVERLAY (Mobile) -->
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
 
-        <nav class="sidebar-nav">
-            <a asp-controller="Dashboard" asp-action="Dashboard" class="nav-item active"><i class="fas fa-house"></i> Home Feed</a>
-            <a asp-controller="Dashboard" asp-action="CreatePost" class="nav-item"><i class="fas fa-pen"></i> Ask Question</a>
-            <a asp-controller="Dashboard" asp-action="ChatPage" class="nav-item"><i class="fas fa-comments"></i> Private Sessions <span class="nav-badge">2</span></a>
-            <a asp-controller="Dashboard" asp-action="Leaderboard" class="nav-item"><i class="fas fa-trophy"></i> Leaderboard</a>
-            <a href="#notifications" class="nav-item"><i class="fas fa-bell"></i> Notifications <span class="nav-badge">3</span></a>
-            <a href="#profile" class="nav-item"><i class="fas fa-user"></i> My Profile</a>
-            <a href="#rewards" class="nav-item"><i class="fas fa-coins"></i> Points & Rewards</a>
-            <a href="#settings" class="nav-item"><i class="fas fa-cog"></i> Settings</a>
-        </nav>
-
-        <div class="pts-widget">
-            <div class="pts-widget-num">1,250</div>
-            <div class="pts-widget-label">POINTS THIS SEMESTER</div>
-            <div class="pts-widget-bar">
-                <div class="pts-widget-fill" style="width: 62%;"></div>
-            </div>
-            <div class="pts-widget-sub">1,000 more to Level 10 🎯</div>
-        </div>
-
-        <div class="sidebar-logout">🚪 Sign Out</div>
-    </aside>
-
-    <!-- MAIN CONTENT -->
+    <!-- MAIN CONTENT WITH SIDEBAR -->
     <div class="app-wrap">
+        <!-- SIDEBAR -->
+        <aside class="sidebar" id="sidebar">
+            <a asp-controller="Dashboard" asp-action="Profile" class="sidebar-user" style="text-decoration:none;">
+                <div class="av av-md"><img src="https://ui-avatars.com/api/?name=@(User.FindFirst(ClaimTypes.Name)?.Value ?? "Student")&background=3D52A0&color=fff&size=60" alt="User"/></div>
+                <div>
+                    <div class="sidebar-user-name">@(User.FindFirst(ClaimTypes.Name)?.Value ?? "Student")</div>
+                    <div class="sidebar-user-pts"><i class="fas fa-coins"></i> <span id="sidebarPoints">-</span> points</div>
+                </div>
+            </a>
+
+            <nav class="sidebar-nav">
+                <a asp-controller="Dashboard" asp-action="Dashboard" class="nav-item" id="navDashboard"><i class="fas fa-house"></i> Home Feed</a>
+                <a asp-controller="Dashboard" asp-action="CreatePost" class="nav-item" id="navCreatePost"><i class="fas fa-pen"></i> Ask Question</a>
+                <a asp-controller="Dashboard" asp-action="Sessions" class="nav-item" id="navChat"><i class="fas fa-comments"></i> Private Sessions <span class="nav-badge">2</span></a>
+                <a asp-controller="Dashboard" asp-action="Leaderboard" class="nav-item" id="navLeaderboard"><i class="fas fa-trophy"></i> Leaderboard</a>
+                <a asp-controller="Dashboard" asp-action="Notifications" class="nav-item" id="navNotifications"><i class="fas fa-bell"></i> Notifications <span class="nav-badge">3</span></a>
+                <a asp-controller="Dashboard" asp-action="Profile" class="nav-item" id="navProfile"><i class="fas fa-user"></i> My Profile</a>
+                <a asp-controller="Dashboard" asp-action="Points" class="nav-item" id="navPoints"><i class="fas fa-coins"></i> Points & Rewards</a>
+                <a href="#" title="Coming soon" onclick="return false" class="nav-item"><i class="fas fa-cog"></i> Settings</a>
+            </nav>
+
+            <div class="pts-widget">
+                <div class="pts-widget-num" id="ptWidget">-</div>
+                <div class="pts-widget-label">POINTS THIS SEMESTER</div>
+                <div class="pts-widget-bar">
+                    <div class="pts-widget-fill" id="ptWidgetBar" style="width: 0%;"></div>
+                </div>
+                <div class="pts-widget-sub" id="ptWidgetSub">-</div>
+            </div>
+
+            <form method="post" asp-controller="Login" asp-action="Logout" style="display: contents;">
+                <button type="submit" class="sidebar-logout" style="border: none; background: none; cursor: pointer; padding: 12px 16px; width: 100%; text-align: left; font-size: 14px; color: #64748B; transition: all 0.2s;">🚪 Sign Out</button>
+            </form>
+        </aside>
+
         <div class="main">
             @RenderBody()
         </div>
     </div>
 
-    <!-- CSS for nav hamburger on mobile -->
-    <style>
-        @@media (max-width: 768px) {
-            .nav-hamburger { display: block !important; }
-            .nav-search { display: none !important; }
+    <!-- Sidebar mobile behavior -->
+    <script>
+        function initSidebar() {
+            const hamburger = document.getElementById('sidebarToggle');
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+
+            if (!hamburger || !sidebar) return;
+
+            hamburger.addEventListener('click', () => {
+                const isOpen = sidebar.classList.toggle('open');
+                hamburger.classList.toggle('open', isOpen);
+                if (overlay) overlay.classList.toggle('open', isOpen);
+                document.body.style.overflow = isOpen ? 'hidden' : '';
+            });
+
+            if (overlay) {
+                overlay.addEventListener('click', closeSidebar);
+            }
+
+            document.addEventListener('keydown', e => {
+                if (e.key === 'Escape') closeSidebar();
+            });
         }
-    </style>
+
+        function closeSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+            const hamburger = document.getElementById('sidebarToggle');
+
+            if (sidebar) sidebar.classList.remove('open');
+            if (overlay) overlay.classList.remove('open');
+            if (hamburger) hamburger.classList.remove('open');
+            document.body.style.overflow = '';
+        }
+
+        // Set active nav based on controller/action from route
+        function setActiveNav() {
+            const path = window.location.pathname.toLowerCase();
+            document.querySelectorAll('.sidebar-nav .nav-item').forEach(link => {
+                link.classList.remove('active');
+                const href = link.getAttribute('href')?.toLowerCase() || '';
+                if (href && path.includes(href.split('/').pop())) {
+                    link.classList.add('active');
+                }
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            initSidebar();
+            setActiveNav();
+        });
+    </script>
 
     <!-- JavaScript -->
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script>
-        // Sidebar toggle
-        document.getElementById('sidebarToggle')?.addEventListener('click', function() {
-            document.getElementById('sidebar').classList.toggle('open');
-        });
-
         // User dropdown
         document.getElementById('navUserBtn')?.addEventListener('click', function(e) {
             e.stopPropagation();

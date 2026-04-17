@@ -17,10 +17,29 @@
     <!-- Page header (hidden on success step) -->
     <div class="page-header" id="page-header">
         <h1 class="page-title"><i class="fas fa-pen"></i> Ask a Question</h1>
-        <p class="page-subtitle">
-            Posting costs <strong class="cost-deducted">−10 pts</strong>.
-            A great answer earns you <strong class="cost-earned">+5 to +15 pts</strong> back!
-        </p>
+        <p class="page-subtitle">Help the community while earning points!</p>
+    </div>
+
+    <!-- Points Explanation Banner -->
+    <div class="points-explanation-banner">
+        <span class="points-explanation-icon">🪙</span>
+        <div class="points-explanation-content">
+            <div class="points-explanation-title">How Points Work</div>
+            <div class="points-explanation-rows">
+                <div class="points-row">
+                    <span class="points-row-cost">−10 pts</span>
+                    <span>Posting a new question</span>
+                </div>
+                <div class="points-row">
+                    <span class="points-row-earn">+5 to +15 pts</span>
+                    <span>For each helpful answer (voted by community)</span>
+                </div>
+                <div class="points-row">
+                    <span class="points-row-earn">+10 pts</span>
+                    <span>For marking an answer as "Best Answer"</span>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- Wizard progress bar -->
@@ -133,8 +152,8 @@
                     <div>
                         <label class="form-label">Course Code <span class="form-label-req">*</span></label>
                         <input class="form-input" id="s2-course" asp-for="CourseCode" maxlength="10"
-                               oninput="updatePreview()" placeholder="e.g. CS302, MATH201, ACCT101" />
-                        <div class="form-hint">The course this question is about</div>
+                               oninput="updatePreview()" placeholder="e.g. CS302, MATH201" />
+                        <div class="form-hint">The code of the course this question is about (e.g., CS302, ACCT101)</div>
                         <div class="form-error" id="err-course">⚠ Please enter the course code</div>
                     </div>
                 </div>
@@ -152,22 +171,44 @@
                     <div class="form-error" id="err-body">⚠ Please describe your question (minimum 50 characters)</div>
                 </div>
 
+                <!-- Image Upload -->
+                <div class="form-group">
+                    <label class="form-label">
+                        Attach Image <span class="form-label-note">(optional)</span>
+                    </label>
+                    <div class="file-upload-wrapper">
+                        <input class="file-upload-input" id="image-input" type="file" accept="image/*" onchange="handleFileSelect(event)" />
+                        <label for="image-input" class="file-upload-label" id="upload-label">
+                            <span class="file-upload-icon">📸</span>
+                            <span class="file-upload-text">Click to upload or drag image here</span>
+                            <span class="file-upload-hint">JPG, PNG, WebP • Max 5MB</span>
+                        </label>
+                        <div class="file-preview hidden" id="file-preview">
+                            <img id="preview-img" class="file-preview-img" alt="Preview" />
+                            <div class="file-preview-info">
+                                <div class="file-preview-name" id="preview-name"></div>
+                                <div class="file-preview-size" id="preview-size"></div>
+                            </div>
+                            <button type="button" class="file-preview-remove" onclick="removeFile()">Remove</button>
+                        </div>
+                    </div>
+                    <div class="form-hint">Adding a screenshot or diagram can greatly help others understand your question</div>
+                </div>
+
                 <!-- Tags -->
                 <div class="form-group tags-form-group">
                     <label class="form-label">
                         Tags <span class="form-label-note">(optional, max 5)</span>
                     </label>
+                    <div class="form-hint" style="margin-bottom: 10px;">Add relevant topics to help others find your question. Examples: AVL trees, binary search, data structures</div>
                     <div class="tags-wrap" id="tags-wrap"
                          onclick="document.getElementById('tags-input').focus()">
                         <input class="tags-input" id="tags-input" maxlength="20"
                                onkeydown="handleTagInput(event)"
                                placeholder="Type a tag and press Enter..." type="text" />
                     </div>
-                    <div class="form-hint">Press Enter or comma to add a tag. Examples: AVL, binary-tree, data-structures</div>
+                    <div class="form-hint">Press Enter or comma to add a tag</div>
                 </div>
-
-                <!-- Hidden input for tags to submit with form -->
-                <input type="hidden" id="tags-hidden" name="Tags" />
             </div>
 
             <div class="wizard-step-actions">
@@ -496,11 +537,6 @@
             showToast('⚠️ Please check all boxes before posting', 'warn');
             return;
         }
-        // Populate hidden tags input with comma-separated tags
-        const tagsHidden = document.getElementById('tags-hidden');
-        if (tagsHidden) {
-            tagsHidden.value = tags.join(',');
-        }
         const form = document.getElementById('create-post-form');
         if (form) form.submit();
     }
@@ -528,4 +564,80 @@
     document.addEventListener('DOMContentLoaded', () => {
         setProgress(1);
     });
+
+    // File upload handling
+    function handleFileSelect(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        // Validate file type
+        if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) {
+            showToast('⚠️ Please upload a JPG, PNG, or WebP image', 'warn');
+            document.getElementById('image-input').value = '';
+            return;
+        }
+
+        // Validate file size (5MB)
+        if (file.size > 5 * 1024 * 1024) {
+            showToast('⚠️ Image must be smaller than 5MB', 'warn');
+            document.getElementById('image-input').value = '';
+            return;
+        }
+
+        // Show preview
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const preview = document.getElementById('file-preview');
+            const img = document.getElementById('preview-img');
+            const name = document.getElementById('preview-name');
+            const size = document.getElementById('preview-size');
+
+            img.src = e.target.result;
+            name.textContent = file.name;
+            size.textContent = (file.size / 1024).toFixed(1) + ' KB';
+            preview.classList.remove('hidden');
+            document.getElementById('upload-label').style.display = 'none';
+        };
+        reader.readAsDataURL(file);
+    }
+
+    function removeFile() {
+        document.getElementById('image-input').value = '';
+        document.getElementById('file-preview').classList.add('hidden');
+        document.getElementById('upload-label').style.display = '';
+    }
+
+    // Drag and drop for file upload
+    const uploadLabel = document.getElementById('upload-label');
+    if (uploadLabel) {
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            uploadLabel.addEventListener(eventName, preventDefaults, false);
+        });
+
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+        ['dragenter', 'dragover'].forEach(eventName => {
+            uploadLabel.addEventListener(eventName, () => {
+                uploadLabel.style.borderColor = 'var(--indigo)';
+                uploadLabel.style.background = 'var(--indigo-light)';
+            });
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            uploadLabel.addEventListener(eventName, () => {
+                uploadLabel.style.borderColor = '';
+                uploadLabel.style.background = '';
+            });
+        });
+
+        uploadLabel.addEventListener('drop', (e) => {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            document.getElementById('image-input').files = files;
+            if (files.length > 0) handleFileSelect({ target: { files } });
+        });
+    }
 </script>

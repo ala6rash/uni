@@ -1,105 +1,11 @@
 ﻿@using System.Security.Claims
 @{
+    ViewData["Title"] = "Private Sessions";
+    Layout = "~/Views/Shared/_DashboardLayout.cshtml";
     var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-    var username = User.FindFirst(ClaimTypes.Name)?.Value;
-    // var otherId = HttpContext.Request.Query["otherId"].ToString();
+    var userName = User.FindFirst(ClaimTypes.Name)?.Value;
 }
 
-<html lang="en">
-
-<head>
-    
-    <meta charset="utf-8" />
-    <meta content="width=device-width,initial-scale=1.0" name="viewport" />
-    <title>Private Sessions — UniConnect</title>
-    data-userid="@userId"
-    data-username="@username"
-</head>
-
-<body data-userid="@userId"
-      data-username="@username">
-    <nav class="navbar">
-        <button class="nav-hamburger" id="hamburger"><span></span><span></span><span></span></button>
-        <a class="nav-logo" href="dashboard.html">
-            <div class="nav-logo-icon">🎓</div><span>UniConnect</span>
-        </a>
-        <div class="nav-search">
-            <input autocomplete="off" class="form-input"
-                   placeholder="🔍  Search questions, courses, topics..." />
-        </div>
-        <div class="nav-actions">
-            <a href="create-post.html"><button class="btn btn-primary btn-sm">+ Ask</button></a>
-            <a class="nav-bell" href="notifications.html">🔔<span class="nav-bell-badge">3</span></a>
-            <div class="nav-user-menu">
-                <div class="div_cls_0" onclick="toggleUserMenu()">
-                    <div class="av av-sm"><img alt="Ahmad" src="https://i.pravatar.cc/36?img=11" /></div>
-                    <span class="span_cls_1">Ahmad ▾</span>
-                </div>
-                <div class="nav-user-dropdown" id="user-dropdown">
-                    <a href="profile.html">
-                        <div class="nav-dropdown-item">👤 My Profile</div>
-                    </a>
-                    <a href="settings.html">
-                        <div class="nav-dropdown-item">⚙️ Settings</div>
-                    </a>
-                    <a href="points.html">
-                        <div class="nav-dropdown-item">🪙 Points &amp; Rewards</div>
-                    </a>
-                    <div class="nav-dropdown-sep"></div>
-                    <div class="nav-dropdown-item logout" onclick="doLogout()">🚪 Sign Out</div>
-                </div>
-            </div>
-        </div>
-    </nav>
-    <div class="sidebar-overlay" id="sidebar-overlay"></div>
-    <div class="app-wrap">
-        <aside class="sidebar" id="sidebar">
-            <a class="sidebar-user" href="profile.html">
-                <div class="av av-md"><img alt="Ahmad" src="https://i.pravatar.cc/44?img=11" /></div>
-                <div>
-                    <div class="sidebar-user-name">Ahmad K.</div>
-                    <div class="sidebar-user-pts">🪙 840 pts</div>
-                </div>
-            </a>
-            <nav class="sidebar-nav">
-                <a href="dashboard.html">
-                    <div class="nav-item"><span class="ni">🏠</span>Home Feed</div>
-                </a>
-                <a href="create-post.html">
-                    <div class="nav-item"><span class="ni">✏️</span>Ask a Question</div>
-                </a>
-                <a href="sessions.html">
-                    <div class="nav-item active"><span class="ni">💬</span>My Sessions</div>
-                </a>
-                <a href="leaderboard.html">
-                    <div class="nav-item"><span class="ni">🏆</span>Leaderboard</div>
-                </a>
-                <a href="notifications.html">
-                    <div class="nav-item"><span class="ni">🔔</span>Notifications<span class="nav-badge">3</span></div>
-                </a>
-                <a href="profile.html">
-                    <div class="nav-item"><span class="ni">👤</span>My Profile</div>
-                </a>
-                <a href="points.html">
-                    <div class="nav-item"><span class="ni">🪙</span>Points &amp; Rewards</div>
-                </a>
-                <a href="settings.html">
-                    <div class="nav-item"><span class="ni">⚙️</span>Settings</div>
-                </a>
-            </nav>
-            <a href="points.html">
-                <div class="pts-widget">
-                    <div class="pts-widget-num">840</div>
-                    <div class="pts-widget-label">🪙 Your Points</div>
-                    <div class="pts-widget-bar">
-                        <div class="pts-widget-fill div_cls_2"></div>
-                    </div>
-                    <div class="pts-widget-sub">160 pts to Verified Tutor</div>
-                </div>
-            </a>
-            <div class="sidebar-logout" onclick="doLogout()">🚪 Sign Out</div>
-        </aside>
-        <main class="main main_cls_3">
             <div class="div_cls_4">
                 <h1 class="h1_cls_5">Private Sessions</h1>
                 <p class="p_cls_6">One-on-one help · 100% voluntary</p>
@@ -145,7 +51,7 @@
                         </div>
                         <div class="chat-main">
                             <div class="chat-topbar">
-                                <a href="user-profile.html?user=rania">
+                                <a href="#" title="Coming soon" onclick="return false">
                                     <div class="av av-sm"><img alt="Rania" src="https://i.pravatar.cc/36?img=20" /></div>
                                 </a>
                                 <div class="div_cls_13">
@@ -168,12 +74,12 @@
                 <div class="hidden" data-tab="" id="tab-requests">
                     <div class="div_cls_25">
                         <div class="card div_cls_26">
-                            <a href="user-profile.html?user=lina">
+                            <a href="#" title="Coming soon" onclick="return false">
                                 <div class="av av-lg"><img alt="Lina" src="https://i.pravatar.cc/60?img=47" /></div>
                             </a>
                             <div class="div_cls_13">
                                 <div class="div_cls_27">
-                                    <a class="a_cls_28" href="user-profile.html?user=lina">Lina H.</a>
+                                    <a class="a_cls_28" href="#" title="Coming soon" onclick="return false">Lina H.</a>
                                     <span class="chip chip-violet">Engineering · Year 2</span>
                                     <span class="div_cls_16">· 5 min ago</span>
                                 </div>
@@ -191,12 +97,12 @@
                             </div>
                         </div>
                         <div class="card div_cls_26">
-                            <a href="user-profile.html?user=sami">
+                            <a href="#" title="Coming soon" onclick="return false">
                                 <div class="av av-lg"><img alt="Sami" src="https://i.pravatar.cc/60?img=65" /></div>
                             </a>
                             <div class="div_cls_13">
                                 <div class="div_cls_27">
-                                    <a class="a_cls_28" href="user-profile.html?user=sami">Sami T.</a>
+                                    <a class="a_cls_28" href="#" title="Coming soon" onclick="return false">Sami T.</a>
                                     <span class="chip chip-indigo">IT · Year 4</span>
                                 </div>
                                 <p class="p_cls_29">
@@ -214,7 +120,7 @@
                 <div class="hidden" data-tab="" id="tab-history">
                     <div class="div_cls_32">
                         <div class="card div_cls_26">
-                            <a href="user-profile.html?user=omar">
+                            <a href="#" title="Coming soon" onclick="return false">
                                 <div class="av av-lg"><img alt="Omar" src="https://i.pravatar.cc/60?img=33" /></div>
                             </a>
                             <div class="div_cls_9">
@@ -230,31 +136,29 @@
                     </div>
                 </div>
             </div>
-        </main>
-    </div>
+    
+    <!-- Logout Form (Razor + CSRF token) -->
+    <form asp-controller="Login" asp-action="Logout" method="post" id="logoutForm" style="display:none">
+        @Html.AntiForgeryToken()
+    </form>
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.5/signalr.min.js"></script>
 
     <script>
-        // ================= USER INFO =================
+        // ========== USER INFO ==========
         const me = {
-            id:   parseInt(document.body.dataset.userid),
-            name: document.body.dataset.username
+            id: @(userId),
+            name: "@(userName)"
         };
-        const otherId = parseInt(document.body.dataset.otherid); 
-
-       
-        const ROOM_ID = String(0 + parseInt(me.id));
+        const ROOM_ID = String(@(userId)); // Will be improved with real session room IDs
         
-        // const ROOM_ID = [me.id, "rani"].sort((a, b) => a - b).join("-");
-
-        // ================= SIGNALR SETUP =================
+        // ========== SIGNALR SETUP ==========
         let myConnectionId = null;
-
+        
         let connection = new signalR.HubConnectionBuilder()
             .withUrl("/chatHub")
             .build();
-
+        
         connection.start()
             .then(() => {
                 myConnectionId = connection.connectionId;
@@ -262,40 +166,40 @@
             })
             .then(() => loadHistory())
             .catch(err => console.error("Connection error:", err));
-
-        // ================= RECEIVE MESSAGE =================
+        
+        // ========== RECEIVE MESSAGE ==========
         connection.on("ReceiveMessage", (connectionId, senderId, message, time) => {
             const side = connectionId === myConnectionId ? "me" : "them";
             appendMessage(side, message, time);
         });
-
-        // ================= SEND MESSAGE =================
+        
+        // ========== SEND MESSAGE ==========
         function sendMsg() {
             const inp = document.querySelector('.chat-input-bar input');
             const message = inp.value.trim();
             if (!message) return;
-
+            
             connection.invoke("SendMessage", ROOM_ID, message)
                 .catch(err => console.error(err.toString()));
-
+            
             inp.value = "";
         }
-
-        // ================= LOAD HISTORY =================
+        
+        // ========== LOAD HISTORY ==========
         async function loadHistory() {
             const res = await fetch(`/api/messages/${ROOM_ID}`);
             const messages = await res.json();
-
+            
             messages.forEach(msg => {
                 appendMessage(
-                    msg.senderId === me.id ? "me" : "them",
-                    msg.content,
+                    msg.senderID === me.id ? "me" : "them",
+                    msg.messageText,
                     msg.time
                 );
             });
         }
-
-        // ================= APPEND MESSAGE =================
+        
+        // ========== APPEND MESSAGE ==========
         function appendMessage(side, content, time) {
             const msgs = document.querySelector('.chat-messages');
             const wrapper = document.createElement('div');
@@ -320,55 +224,12 @@
             msgs.appendChild(wrapper);
             msgs.scrollTop = msgs.scrollHeight;
         }
-        // ==================================
 
         function escapeHtml(str) {
             return str.replace(/&/g, '&amp;')
                       .replace(/</g, '&lt;')
                       .replace(/>/g, '&gt;')
                       .replace(/"/g, '&quot;');
-        }
-
-        // Keep ENTER key working
-        document.addEventListener("DOMContentLoaded", () => {
-            const input = document.querySelector(".chat-input-bar input");
-            if (input) {
-                input.addEventListener("keydown", function (e) {
-                    if (e.key === "Enter") {
-                        sendMsg();
-                    }
-                });
-            }
-        });
-
-
-        
-        // ── Sidebar hamburger ──
-        function initSidebar() {
-          const h = document.getElementById('hamburger'),
-            s = document.getElementById('sidebar'),
-            o = document.getElementById('sidebar-overlay');
-          if (!h || !s) return;
-          h.addEventListener('click', () => {
-            const open = s.classList.toggle('open');
-            h.classList.toggle('open', open);
-            if (o) o.classList.toggle('open', open);
-            document.body.style.overflow = open ? 'hidden' : ''
-          });
-          if (o) o.addEventListener('click', closeSidebar);
-          document.addEventListener('keydown', e => {
-            if (e.key === 'Escape') closeSidebar()
-          })
-        }
-
-        function closeSidebar() {
-          const s = document.getElementById('sidebar'),
-            o = document.getElementById('sidebar-overlay'),
-            h = document.getElementById('hamburger');
-          if (s) s.classList.remove('open');
-          if (o) o.classList.remove('open');
-          if (h) h.classList.remove('open');
-          document.body.style.overflow = ''
         }
 
         // ── Tabs ──
@@ -384,21 +245,6 @@
           }
         }
 
-        // ── Wizard ──
-        function wzStep(n) {
-          [1, 2, 3].forEach(i => {
-            const p = document.getElementById('wz' + i),
-              s = document.getElementById('ws' + i);
-            if (!p || !s) return;
-            p.classList.toggle('hidden', i !== n);
-            s.classList.remove('active', 'done');
-            if (i === n) s.classList.add('active');
-            if (i < n) s.classList.add('done')
-          })
-        }
-
-       
-
         // ── Toast ──
         function showToast(msg, type = '') {
           const ex = document.querySelector('.toast');
@@ -413,31 +259,4 @@
             setTimeout(() => el.remove(), 300)
           }, 3000)
         }
-
-      
-
-
-
-
-        // ── User menu dropdown ──
-        function toggleUserMenu() {
-          const d = document.getElementById('user-dropdown');
-          if (d) d.classList.toggle('open')
-        }
-        document.addEventListener('click', e => {
-          const d = document.getElementById('user-dropdown');
-          if (d && !e.target.closest('.nav-user-menu')) d.classList.remove('open')
-        })
-
-        // ── Logout ──
-        function doLogout() {
-          if (confirm('Are you sure you want to sign out?')) window.location.href = 'login.html'
-        }
-
-       
-    
     </script>
-    
-</body>
-
-</html>
