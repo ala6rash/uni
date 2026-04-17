@@ -1,5 +1,11 @@
 # Uni-Connect
 
+## Repository alignment
+
+- This repository is aligned to `Ahmad-Allahawani/Uni-Connect` on the `master` branch.
+- Previously diverging code has been preserved under `archive/legacy-uni/`.
+- See `docs/archive-legacy-uni.md` for archive details.
+
 ## What we need to work on
 
 ### Home / Login
